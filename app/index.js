@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 var morgan = require('morgan')
 var api_router = require("./api")
 
-app.use(morgan('combined'))
+app.use(morgan('common'))
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
