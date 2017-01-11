@@ -1,32 +1,17 @@
-//    VARIABLES
-
+//  DEPENDENCIES
 // ***********************************
 var dotenv = require('dotenv').config();
-var express = require('express');
 var app = require('./app');
-var path = require('path');
 var port = process.env.PORT
 // ***********************************
 
-//     PUBLIC PATH
+//  DATABASE
+// ***********************************
+var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
+mongoose.connect('mongodb://localhost:27017/zeriff');
 
-//************************************
-app.use(express.static(__dirname + '/public'));
-//************************************
-
-//    DEFAULT ROOT PATH
-//************************************
-app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname + '/index.html'));
-});
-app.get('*', function(req, res) {
-    res.sendFile('index.html', {
-        root: __dirname + '/public'
-    });
-});
-//************************************
-
-//  SERVER Listening
+//  SERVER
 //************************************
 app.listen(port, function() {
     console.log("Listening on port" + port);
