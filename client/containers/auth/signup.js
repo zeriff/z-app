@@ -1,41 +1,68 @@
 import React from 'react';
+import axios from 'axios';
+import {browserHistory} from 'react-router';
+import {
+    Container,
+    Form,
+    Button,
+    Checkbox,
+    Segment,
+    Grid
+} from 'semantic-ui-react';
+import storageMgr from '../../utils/storagemanager';
 
 class Signup extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            username: "",
-            password: "",
-            confirmpassword: ""
+    onFormSubmit(e, data) {
+        e.preventDefault()
+        if (data.formData.term == true) {
+            Loader.setLoading();
+            axios.post("/api/users/done", {
+                user_id: this.props.location.query.id,
+                password: data.formData.password,
+                term: data.formData.term
+            }).then(function(res) {
+                if (res.data.success) {
+                    storageMgr.addUserDetails(res.data.userDetails);
+                    browserHistory.push("/");
+                    toastr.message(re.data.message);
+                } else {
+                    toastr.error(res.data.message);
+                }
+            });
+        } else {
+            toastr.error("Please accespt terms & Conditions");
         }
-    }
 
-    onUsernameChange(e) {
-        this.setState({username: e.target.value})
-    }
-
-    onPasswordChange(e) {
-        this.setState({password: e.target.value})
     }
 
     render() {
         return (
-            <div className="ui container">
-                <div className="ui two column center aligned stackable grid">
-                    <div className="six wide column">
-                        <h2>Sign Up</h2>
-                        <form className="ui form segment">
-                            <div className="field">
-                                <input type="text" name="username" placeholder="Username" value={this.state.username} onChange={this.onUsernameChange.bind(this)}></input>
+            <Container>
+                <div className="ui middle aligned center aligned grid">
+                    <div className="column" style={{
+                        maxWidth: '450px'
+                    }}>
+                        <h2 className="ui image header" style={{
+                            paddingTop: '30%'
+                        }}>
+                            <div className="pintitle">
+                                Set your password
                             </div>
-                            <div className="field">
-                                <input type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.onPasswordChange.bind(this)}></input>
-                            </div>
-                            <button type="submit" className="ui primary submit button">Signup</button>
-                        </form>
+                        </h2>
+                        <Form onSubmit={this.onFormSubmit.bind(this)}>
+                            <Segment stacked>
+                                <Form.Field>
+                                    <input type="password" name="password" placeholder="Password"/>
+                                </Form.Field>
+                                <Form.Field>
+                                    <Checkbox name="term" label='I agree to the Terms and Conditions'/>
+                                </Form.Field>
+                                <Button type='submit' color='teal' fluid={true}>Signup</Button>
+                            </Segment>
+                        </Form>
                     </div>
                 </div>
-            </div>
+            </Container>
         )
     }
 }

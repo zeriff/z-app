@@ -1,16 +1,16 @@
 import store from './store'
-import {loadBoards, loadUsers} from './actions';
+import {loadBoards, loadUsers, loadPins, loadUserBoards} from './actions';
 import axios from 'axios';
 import storageMgr from './utils/storagemanager';
 import {browserHistory} from 'react-router';
 
-export function loadBoardsOnEnter() {
+export function load_discover_boards() {
     var userdetails = storageMgr.getUserDetails()
     if (userdetails == null) {
         browserHistory.push("/auth/signin");
         return
     } else {
-        axios.get('/api/boards', {
+        axios.get('/api/discover', {
             headers: {
                 "x-access-token": storageMgr.getToken()
             }
@@ -19,6 +19,35 @@ export function loadBoardsOnEnter() {
             store.dispatch(loadBoards(res.data.boards));
         });
     }
+}
+
+export function load_user_pins() {
+    var userdetails = storageMgr.getUserDetails()
+    if (userdetails == null) {
+        browserHistory.push("/auth/signin");
+        return
+    } else {
+        axios.get('/api/pins', {
+            headers: {
+                "x-access-token": storageMgr.getToken()
+            }
+        }).then(function(res) {
+            console.log("boards loading : ", res);
+            store.dispatch(loadPins(res.data.pins));
+        });
+    }
+}
+
+export function load_user_boards() {
+
+    axios.get('/api/userboards', {
+        headers: {
+            "x-access-token": storageMgr.getToken()
+        }
+    }).then(function(res) {
+        console.log(res.data);
+        store.dispatch(loadUserBoards(res.data.userboards));
+    });
 }
 
 export function checkUserSession() {
@@ -45,24 +74,4 @@ export function getUsers() {
             store.dispatch(loadUsers(res.data.users));
         });
     }
-}
-
-export function loadboardPins() {
-    axios.get('/api/pins/board/' + board.title, {
-        headers: {
-            "x-access-token": storageMgr.getToken()
-        }
-    }).then(function(res) {
-        me.props.loadPins(res.data.pins);
-        if (res.data.pins.length > 0) {
-            $('.ui.basic.modal').modal('show');
-            setTimeout(function() {
-                masonry.bind("pins", "pin");
-                masonry.reload("pins");
-            }, 500);
-
-        } else {
-            toastr.info("No pins found for this board");
-        }
-    });
 }

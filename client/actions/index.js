@@ -1,4 +1,4 @@
-import {ADD_TAG, LOAD_PINS, LOAD_BOARDS, LOAD_USERS} from './types';
+import {ADD_TAG, LOAD_PINS, LOAD_BOARDS, LOAD_USERS, LOAD_USERBOARDS} from './types';
 import axios from 'axios';
 import storageMgr from '../utils/storagemanager';
 import store from '../store';
@@ -13,6 +13,10 @@ export function loadPins(pins) {
 
 export function loadBoards(boards) {
     return {type: LOAD_BOARDS, payload: boards}
+}
+
+export function loadUserBoards(userboards) {
+    return {type: LOAD_USERBOARDS, payload: userboards}
 }
 
 export function loadUsers(users) {

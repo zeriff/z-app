@@ -47,10 +47,11 @@ describe("Follow api", function() {
         });
     });
 
-    it("GET /api/following/:user_id should get following status", function(done) {
-        supertest(app).get("/api/follow/status" + user._id).set('x-access-token', auth_helper.getToken()).end(function(err, res) {
+    it("GET /api/follow/status/:user_id should get following status", function(done) {
+        supertest(app).get("/api/follow/status/" + user._id).set('x-access-token', auth_helper.getToken()).end(function(err, res) {
             res.status.should.equal(200);
-            res.body.should.have.property("following");
+            res.body.should.have.property('follow');
+            res.body.follow.should.equal(true);
             done();
         });
     });
@@ -62,4 +63,4 @@ describe("Follow api", function() {
         });
     });
 
-});
+})

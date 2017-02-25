@@ -1,24 +1,139 @@
 var User = require('../../models/user')
 var auth = require('../../middlewares/authorization');
-var Board = require('../../models/board')
-var Pin = require('../../models/pin')
+var TempUser = require('../../models/tempuser')
+var jwt = require('jsonwebtoken');
+var Profile = require('../../models/profile');
+var Follow = require('../../models/follow');
+var UserBoard = require('../../models/userboard');
 
-function getAllUsers(req, res) {
-    User.getAll(function(users) {
-        res.json({users: users})
-    });
+var bind_user_controller = function(router) {
+    router
+        .route("/users")
+        .get(auth.authorize_admin, getAllUsers)
+        .post(register);
+    router
+        .route("/users/:id")
+        .delete(auth.authorize_user, deleteUser);
+    router
+        .route("/users/done")
+        .post(finalize_registration);
+    router
+        .route("/users/:id/profile")
+        .get(getUserinfo);
 }
 
-function createUser(req, res) {
-    var newUser = {
-        username: req.body.username,
-        email: req.body.email,
-        password: req.body.password
-    };
+function getUserinfo(req, res) {
+    let user_id = req.params.id;
+    let query = {
+        _id: user_id
+    }
+    let profile_query = {
+        user_id: user_id
+    }
 
-    User.create(newUser, function(err, user) {
-        res.json({message: "Successfully created", user: user});
+    let get_profile = Profile.findOne(profile_query);
+
+    let get_followers = get_profile.then(function(p) {
+        return Follow.getFollowers(user_id);
     });
+    let get_following = get_followers.then(function(followers) {
+        return Follow.getFollowing(user_id);
+    });
+
+    let get_memory_boards = get_following.then(function(following) {
+        return UserBoard.getMemoryBoards(user_id);
+    });
+
+    Promise
+        .all([get_profile, get_followers, get_following, get_memory_boards])
+        .then(function(userinfo) {
+            res.json({
+                avatar: userinfo[0].avatar,
+                avatar: userinfo[0].intrests,
+                avatar: userinfo[0].gender,
+                avatar: userinfo[0].name,
+                followers: userinfo[1].length,
+                following: userinfo[2].length,
+                memories: userinfo[3].length
+            });
+        });
+
+}
+
+function finalize_registration(req, res) {
+    let temp_user_query = {
+        _id: req.body.user_id
+    };
+    TempUser
+        .findOne(temp_user_query)
+        .then(function(t_user) {
+            if (t_user) {
+                if (req.body.password) {
+                    User
+                        .createNewUserProfile(t_user, req.body.password)
+                        .then(function(user) {
+                            autheticateUser_after_signup(user.new_user.username, user.new_user.password, user.new_profile)
+                                .then(function(response) {
+                                    t_user.remove();
+                                    res.json(response);
+                                });
+                        });
+                } else {
+                    res.json({success: false, message: "Please set your password!"})
+                }
+            } else {
+                res.json({success: false, message: "Something went wrong please try again!"})
+            }
+        });
+}
+
+function register(req, res) {
+
+    let g_res = req.body;
+    let tokens = g_res.tokenObj;
+    let profile = g_res.profileObj;
+
+    let user_exist_query = {
+        email: profile.email
+    }
+    User
+        .findOne(user_exist_query)
+        .then(function(user) {
+            if (user) {
+                res.json({new: false, username: user.username, message: "Already Registered please signin!"})
+            } else {
+                let tempuser = new TempUser({
+                    email: profile.email,
+                    username: "@" + profile
+                        .givenName
+                        .toLowerCase(),
+                    name: profile.name,
+                    access_token: tokens.access_token,
+                    avatar: profile.imageUrl,
+                    google_id: profile.googleId,
+                    id_token: tokens.id_token
+                });
+
+                tempuser
+                    .save()
+                    .then(function(t_user) {
+                        res.json({exist: false, user_id: t_user._id});
+                    });
+            }
+        });
+
+}
+
+function getAllUsers(req, res) {
+    User
+        .find({})
+        .then(function(users) {
+            res.json({
+                users: users
+                    ? users
+                    : []
+            })
+        });
 }
 
 function deleteUser(req, res) {
@@ -31,34 +146,48 @@ function deleteUser(req, res) {
     });
 }
 
-function addNewBoard(req, res) {
-    var board = req.params.newboard;
-    Board.findOne({
-        title: board
-    }, function(err, b) {
-        User.findOne({
-            _id: auth.getCurrentUser()._id
-        }, function(err, user) {
-            Pin.findOne({
-                _id: "5852d3f7377ba894f185f30d"
-            }, function(err, pin) {
-                user.addBoard(b, pin, function(err) {
-                    if (err) {
-                        throw err
-                    }
-                    res.json({success: true, message: "Board added Successfully"});
+function autheticateUser_after_signup(username, password, profile) {
+    return new Promise(function(resolve, reject) {
+        let query = {
+            username: username
+        }
+        let find_user = User.findOne(query);
+        find_user.then(function(user) {
+
+            if (!user) {
+                return resolve({success: false, message: "Authentication failed, user not found"});
+
+            }
+            if (user.password != password) {
+                return resolve({success: false, message: "Authentication failed, Wrong password"});
+
+            }
+            if (user.password === password) {
+                let update_query = {
+                    session_token: Math.random()
+                }
+                let find_query = {
+                    _id: user._id
+
+                }
+                let udpate_token = User.findOneAndUpdate(find_query, update_query, {new: true});
+
+                udpate_token.then(function(updated_user) {
+                    let token = jwt.sign(updated_user, process.env.ZERIFF_APP_SECRET);
+                    return resolve({
+                        success: true,
+                        message: "Authentication Successfull...",
+                        userDetails: {
+                            token: token,
+                            username: updated_user.username,
+                            avatar: profile.avatar
+                        }
+                    });
                 });
-            });
-        })
+            }
+        });
 
     });
-
-}
-
-var bind_user_controller = function(router) {
-    router.route("/users").post(createUser);
-    router.route("/users/:id").delete(auth.authorize_user, deleteUser);
-    router.route("/users/newboard/:newboard").get(auth.authorize_user, addNewBoard);
 }
 
 module.exports = {

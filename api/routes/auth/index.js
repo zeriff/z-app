@@ -1,47 +1,62 @@
 var jwt = require('jsonwebtoken');
 var User = require('../../models/user');
+var Profile = require('../../models/profile');
+
+var bind_auth_api = function(router) {
+    router
+        .route("/auth")
+        .post(autheticateUser);
+}
 
 function autheticateUser(req, res) {
-    var username = req.body.username;
-    var password = req.body.password;
+    let username = req.body.username;
+    let password = req.body.password;
 
-    User.findOne({
+    let query = {
         username: username
-    }, function(err, user) {
-        if (err) {
-            throw err
-        }
+    }
+    let find_user = User.findOne(query);
+    find_user.then(function(user) {
 
         if (!user) {
             res.json({success: false, message: "Authentication failed, user not found"});
+            return;
         }
         if (user.password != password) {
             res.json({success: false, message: "Authentication failed, Wrong password"});
-        } else {
+            return;
+        }
+        if (user.password === password) {
+            let update_query = {
+                session_token: Math.random()
+            }
+            let find_query = {
+                _id: user._id
+            }
+            let udpate_token = User.findOneAndUpdate(find_query, update_query, {new: true});
 
-            let session_token = Math.random();
-            user.update({
-                session_token: session_token
-            }, function() {
-
-                let sign_user_model = new User({_id: user._id, username: user.username, session_token: session_token});
-
-                var token = jwt.sign(sign_user_model, "super_secrete_need_to_be_changed");
-                res.json({
-                    success: true,
-                    message: "Authentication Successfull...",
-                    userDetails: {
-                        token: token,
-                        username: user.username
-                    }
-                });
-            })
+            udpate_token.then(function(updated_user) {
+                Profile
+                    .findOne({user_id: updated_user._id})
+                    .then(function(profile) {
+                        let token = jwt.sign(updated_user, process.env.ZERIFF_APP_SECRET);
+                        res.json({
+                            success: true,
+                            message: "Authentication Successfull...",
+                            userDetails: {
+                                token: token,
+                                username: updated_user.username,
+                                profile: profile
+                                    ? profile
+                                    : {
+                                        avatar: '/img/logo.png'
+                                    }
+                            }
+                        });
+                    });
+            });
         }
     });
-}
-
-var bind_auth_api = function(router) {
-    router.route("/auth").post(autheticateUser);
 
 }
 

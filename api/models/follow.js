@@ -2,7 +2,10 @@ var mongoose = require("mongoose");
 var Promise = require('promise');
 // **************SCHEMA*************************
 var Schema = mongoose.Schema;
-var followSchema = new Schema({follower_id: String, followable_id: String});
+var followSchema = new Schema({
+    follower_id: String,
+    followable_id: String
+}, {timestamps: true});
 
 // **************SCHEMA_METHODS*****************
 
@@ -11,9 +14,9 @@ var Follow = mongoose.model('Follow', followSchema);
 
 module.exports = Follow;
 
-module.exports.createFollow = function(follower_id, followable_id) {
+module.exports.createFollow = function(by_user_id, user_id) {
     return new Promise(function(resolve, reject) {
-        let follow = new Follow({follower_id: follower_id, followable_id: followable_id});
+        let follow = new Follow({follower_id: by_user_id, followable_id: user_id});
         follow.save().then(resolve)
     });
 }
@@ -57,7 +60,16 @@ module.exports.getFollowing = function(user_id) {
 
 module.exports.isFollowing = function(current_user_id, by_user_id) {
     let query = {
-        followable_id: current_user_id,
-        follower_id: by_user_id
+        follower_id: current_user_id,
+        followable_id: by_user_id
     }
+    return new Promise(function(resolve, reject) {
+        Follow.findOne(query).then(function(follow) {
+            if (follow) {
+                resolve(true)
+            } else {
+                resolve(false)
+            }
+        });
+    });
 }

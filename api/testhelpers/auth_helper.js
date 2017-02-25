@@ -7,7 +7,8 @@ var request = supertest.agent("http://localhost:8080");
 var token = null;
 
 before(function(done) {
-    request.post('/api/auth').send({username: "sujanthakare", password: "ss123"}).end(function(err, res) {
+    request.post('/api/auth').send({username: "@sujanthakare", password: "ss123"}).end(function(err, res) {
+        console.log(res.body);
         token = res.body.userDetails.token;
         done();
     });

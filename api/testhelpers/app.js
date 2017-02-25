@@ -1,4 +1,6 @@
 var app = require("../../app");
+var path = require('path');
+var dotenv = require('dotenv').config();
 //  DATABASE
 // ***********************************
 var mongoose = require('mongoose');

@@ -1,20 +1,38 @@
 var fs = require("fs");
 var AWS = require('aws-sdk');
 
-AWS.config = new AWS.Config();
-AWS.config.accessKeyId = process.env.AWS_KEY;
-AWS.config.secretAccessKey = process.env.AWS_ACCESS_KEY;
-AWS.config.signatureVersion = 'v4';
+var image_uploader = {
+    setUpS3: function() {
+        AWS.config = new AWS.Config();
+        AWS.config.accessKeyId = process.env.AWS_KEY;
+        AWS.config.secretAccessKey = process.env.AWS_ACCESS_KEY;
+        AWS.config.signatureVersion = 'v4';
 
-var s3 = new AWS.S3();
+    },
+    deleteFile: function(current_user, dirPath, filename, callback) {
+        image_uploader.setUpS3();
+        let s3 = new AWS.S3();
+        let params = {
+            'Bucket': process.env.AWS_BUCKET,
+            'Key': current_user._id + "/" + dirPath + "/" + filename
+        };
 
-module.exports = {
-    upload: function(current_user, file, dirPath, callback) {
+        s3.deleteObject(params, function(err, data) {
+            if (err) {
+                callback(false);
+            }
+            callback(true);
+        });
 
+    },
+    upload: function(current_user, file, dirPath, filename, callback) {
+        console.log("in image uploader");
+        image_uploader.setUpS3();
+        let s3 = new AWS.S3();
         var bodystream = fs.createReadStream(file.path);
         var params = {
             'Bucket': process.env.AWS_BUCKET,
-            'Key': current_user._id + "/" + dirPath + "/" + file.filename,
+            'Key': current_user._id + "/" + dirPath + "/" + filename,
             'Body': bodystream,
             'ContentEncoding': 'base64',
             'ACL': 'public-read',
@@ -32,3 +50,5 @@ module.exports = {
         });
     }
 }
+
+module.exports = image_uploader;

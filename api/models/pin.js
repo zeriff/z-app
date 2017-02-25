@@ -8,18 +8,23 @@ var Board = require("./board");
 var UserBoard = require('./userboard');
 var auth = require("../middlewares/authorization");
 var Promise = require('promise');
+var constants = require('../constants');
+var UserBoard = require('./userboard');
 
 // **************SCHEMA*******************
-var pinSchema = new Schema({user_id: String, title: String, story: String, image_url: String, boards: Array});
+var pinSchema = new Schema({
+    user_id: String,
+    title: String,
+    story: String,
+    image_url: String,
+    boards: {
+        type: [String],
+        index: true
+    }
+}, {timestamps: true});
 
 // **************SCHEMA_METHODS*********************
-pinSchema.methods = {
-    addImageUrlP: function(url) {
-        let me = this;
-        me.image_url = url;
-        return me.save();
-    }
-}
+
 // **************MODEL*********************
 var Pin = mongoose.model('Pin', pinSchema);
 
@@ -35,169 +40,128 @@ function findTag(tag, tags) {
 // **************EXPORTS*********************
 module.exports = Pin;
 
+// HELPERS
+
+function get_validated_boards(boards) {
+    if (boards.length == 0) {
+        let today = new Date();
+        let d_array = today
+            .toString()
+            .split(" ");
+        d_array.splice(4, d_array.length);
+        let default_board = d_array.join(" ");
+        boards.push(default_board);
+    }
+    return boards;
+}
+
 // MODEL_METHODS
 // ******************************************
-// CREATE NEW PIN
-
-module.exports.add = function(current_user, pinParams, callback) {
-    console.log("pinParams", pinParams);
-
-    let newPin = new Pin({user_id: current_user._id, title: pinParams.title, story: pinParams.story});
-    // Data Ref
-    let saved_pin = {};
-    let pin_title = "";
-    let pin_story = "";
-    let pin_image_url = "";
-    let pin_save = newPin.save();
-
-    let image_upload = pin_save.then(function(pin) {
-        console.log("image_upload : ", arguments);
-        saved_pin = pin;
-        pin_title = pin.title;
-        pin_story = pin.story;
-        return new Promise(function(resolve, reject) {
-            if (pinParams.files.length > 0) {
-                pinParams.files.forEach(function(file, index) {
-                    var dirPath = "pins/" + pin._id;
-                    AwsUploader.upload(current_user, file, dirPath, function(data) {
-                        resolve(data, pin);
-                    });
-                });
-            }
-        });
-    });
-
-    let add_image_url = image_upload.then(function(data, pin) {
-        console.log("add_image_url : ", arguments);
-        pin_image_url = data.Location;
-        return newPin.addImageUrlP(data.Location);
-    })
-
-    let add_board = add_image_url.then(function(pin) {
-        console.log("add_board : ", arguments);
-        if (pinParams.boards.constructor === Array) {
-            pinParams.boards.forEach(function(b_item, index) {
-                return current_user.addBoard(b_item);
-            });
-        } else {
-            return current_user.addBoard(pinParams.boards);
-        }
-    });
-
-    let add_userboard = add_board.then(function(board) {
-
-        console.log("add_userboard : ", arguments);
-        let user_board = {
-            title: board.title,
-            story: pin_story,
-            image_url: pin_image_url
-        }
-
-        return new Promise(function(resolve) {
-            UserBoard.addP(current_user, user_board, resolve);
-        })
-
-    });
-    let add_tag = add_userboard.then(function() {
-        console.log("add_tag : ", arguments);
-        let boards = [];
-        if (pinParams.boards.constructor === Array) {
-            boards = pinParams.boards;
-        } else {
-            boards = [pinParams.boards];
-        }
-        return newPin.update({
-            $addToSet: {
-                boards: {
-                    $each: boards
-                }
-            }
-        });
-    });
-    add_tag.then(function(p) {
-        console.log("callback : ", arguments);
-        newPin.save().then(callback);
-    });
-
-}
-
-module.exports.edit = function(pin_id, pinParams, callback) {
+module.exports.getAll = function(current_user, callback) {
     let query = {
-        _id: pin_id
-    }
+        user_id: current_user._id
+    };
+    return Pin.find(query);
+}
 
-    let boards = [];
+module.exports.createPin = function(current_user, pinParams) {
+    return new Promise(function(resolve, reject) {
 
-    if (pinParams.boards.constructor === Array) {
-        boards = pinParams.boards;
-    } else {
-        boards = [pinParams.boards];
-    }
+        let validated_boards = get_validated_boards(pinParams.boards);
+        let newPin = new Pin({user_id: current_user._id, title: pinParams.title, story: pinParams.story, boards: validated_boards});
+        let add_boards = Board.createManyBoards(pinParams.boards);
 
-    let update_object = {
-        title: pinParams.title,
-        story: pinParams.story,
-        $addToSet: {
-            boards: {
-                $each: boards
-            }
-        }
-    }
-    let options = {
-        multi: true
-    }
-    Pin.findByIdAndUpdate(pin_id, update_object, options, function(err, pin) {
-        if (err) {
-            throw err;
-        }
-        callback(pin);
+        let image_upload = add_boards.then(function() {
+            return new Promise(function(r) {
+                let file = pinParams.file;
+                if (file) {
+                    var dirPath = "pins";
+                    console.log("UPloading images:", pinParams);
+                    AwsUploader.upload(current_user, file, dirPath, newPin._id, function(data) {
+                        r(data);
+                    });
+                } else {
+                    r({Location: constants.default_image});
+                }
+            });
+        });
+
+        let assign_pin_image_and_add_to_UserBoard = image_upload.then(function(data) {
+            newPin.image_url = data.Location;
+            return UserBoard.createManyDreamBoards(current_user, {
+                boards: validated_boards,
+                image_url: data.Location,
+                story: pinParams.story
+            });
+        });
+
+        assign_pin_image_and_add_to_UserBoard.then(function() {
+            newPin
+                .save()
+                .then(resolve);
+        });
     });
 }
 
-module.exports.delete = function(current_user, pin_id, callback) {
+module.exports.delete = function(current_user, pin_id) {
     var query = {
         _id: pin_id
     };
     return new Promise(function(resolve) {
-        Pin.findOne(query).then(function(pin) {
+        let find_pin = Pin.findOne(query);
+
+        let remove_pin = find_pin.then(function(pin) {
             if (pin) {
-                pin.remove().then(function(pin) {
-                    if (pin) {
-                        resolve({error: "Successfully deleted", success: true});
-                    }
-                });
-            } else {
-                resolve({error: "Pin not found!", success: false});
+                return pin.remove();
             }
+            return Promise.resolve(null);
+        });
+
+        remove_pin.then(function(p) {
+            if (p != null) {
+                AwsUploader
+                    .deleteFile(current_user, "pins", pin_id, function(success) {
+                        resolve(success);
+                    });
+            } else {
+                resolve(false);
+            }
+
         });
 
     });
 };
 
-module.exports.get = function(pin_id) {
+module.exports.edit = function(current_user, pin_id, pinParams) {
     let query = {
         _id: pin_id
     }
-    return new Promise(function(resolve) {
-        Pin.findOne(query, function(err, pin) {
-            if (pin) {
-                resolve({pin: pin, success: true});
-            } else {
-                resolve({pin: {}, message: "Pin not found!", success: false});
+    return new Promise(function(resolve, reject) {
+        let update_object = {
+            title: pinParams.title,
+            story: pinParams.story,
+            $addToSet: {
+                boards: {
+                    $each: pinParams.boards
+                }
             }
-        });
-    })
-
-}
-
-module.exports.getAll = function(current_user, callback) {
-    let query = {
-        user_id: current_user._id
-    }
-    Pin.find(query, function(err, pins) {
-        if (err) {
-            throw err;
         }
-        callback(pins)
-    })
+        let options = {
+            multi: true,
+            new: true
+        }
+        Pin
+            .findByIdAndUpdate(pin_id, update_object, options)
+            .then(function(new_pin) {
+                UserBoard
+                    .createManyDreamBoards(current_user, {
+                        boards: pinParams.boards,
+                        image_url: new_pin.image_url,
+                        story: new_pin.story
+                    })
+                    .then(function(boards) {
+                        resolve({pin: new_pin, boards: boards})
+                    });
+            });
+    });
 }

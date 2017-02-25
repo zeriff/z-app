@@ -1,24 +1,20 @@
 var jwt = require('jsonwebtoken');
-var current_user = {};
-
 var User = require("../models/user");
 
 // HELPER_METHODS
 
 var auth = {
-    current_user: {},
-    authorize_user: function(req, res, next) {
+    current_user: null,
+    setCurrentUser: function(req, res, next) {
         var token = req.headers['x-access-token'];
         if (token) {
-
-            jwt.verify(token, "super_secrete_need_to_be_changed", function(err, decodedToken) {
+            jwt.verify(token, process.env.ZERIFF_APP_SECRET, function(err, decodedToken) {
                 if (err) {
-                    return res.json({success: false, message: "Authorization failed!"})
+                    auth.current_user = null;
+                    next();
                 } else {
-
                     try {
                         req.decodedToken = decodedToken;
-                        // console.log(decodedToken._doc);
                         let userquery = {
                             _id: decodedToken._doc._id
                         }
@@ -27,21 +23,31 @@ var auth = {
                                 auth.current_user = user;
                                 next();
                             } else {
-                                return res.json({success: false, message: "Your login expired please login in!"})
+                                auth.current_user = null;
+                                next();
                             }
                         });
                     } catch (e) {
+                        auth.current_user = null;
                         console.log(e);
-                        return res.json({success: false, message: "Your login expired please login in!"})
+                        next();
                     }
                 }
             });
         } else {
-            return res.status(403).send({success: false, message: "No token Provided!"})
+            auth.current_user = null;
+            next();
+        }
+    },
+    authorize_user: function(req, res, next) {
+        if (auth.current_user == null) {
+            return res.status(403).send({success: false, message: "Authorization failed!"})
+        } else {
+            next();
         }
     },
     authorize_admin: function(req, res, next) {
-        if (auth.current_user.isAdmin) {
+        if (auth.current_user != null && auth.current_user.isAdmin) {
             next();
         } else {
             return res.status(403).send({success: false, message: "You are not Authorized!"})
@@ -52,7 +58,6 @@ var auth = {
     },
 
     isAnAdmin: function() {
-        console.log("isAdmin", current_user);
         if (auth.current_user.isAdmin) {
             return true;
         } else {

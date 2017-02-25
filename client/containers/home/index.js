@@ -1,60 +1,27 @@
 import React from 'react';
-import {Link} from 'react-router';
 import {connect} from 'react-redux';
-import Board from './board';
-import axios from 'axios';
-import storageMgr from '../../utils/storagemanager';
-import {browserHistory} from 'react-router';
-import PinModal from './pins_modal';
+import Pin from '../../components/entity/pin';
 import * as actions from '../../actions';
 
 class Home extends React.Component {
+    // static contextTypes = {
+    //     router: React.PropTypes.func.isRequired
+    // };
+
     constructor(props) {
         super(props);
-        this.contextTypes = {
-            router: React.PropTypes.func.isRequired
-        };
-    }
-    componentDidMount() {
-        var userdetails = storageMgr.getUserDetails();
-        if (userdetails != null) {
-            setTimeout(function() {
-                this.context.router.transitionTo('/');
-            }, 500);
-        }
     }
 
     componentDidUpdate() {
-        masonry.bind("boards", "board");
-        masonry.reload("boards");
+        masonry.bind("pins", "pin");
+        masonry.reload("pins");
     }
 
-    _pinclickhandler(board) {
-        let me = this;
-        axios.get('/api/pins/board/' + board.title, {
-            headers: {
-                "x-access-token": storageMgr.getToken()
-            }
-        }).then(function(res) {
-            me.props.loadPins(res.data.pins);
-            if (res.data.pins.length > 0) {
-                $('.ui.basic.modal').modal('show');
-                setTimeout(function() {
-                    masonry.bind("pins", "pin");
-                    masonry.reload("pins");
-                }, 500);
-
-            } else {
-                toastr.info("No pins found for this board");
-            }
-        });
-    }
-
-    _renderBoards() {
+    _renderPins() {
         var me = this;
-        return this.props.boards.map(function(item) {
+        return this.props.pins.map(function(item) {
             return (
-                <Board key={Math.random()} board={item} clickHandler={me._pinclickhandler.bind(me)}></Board>
+                <Pin key={Math.random()} pin={item}></Pin>
             )
         });
     }
@@ -63,10 +30,10 @@ class Home extends React.Component {
 
         return (
             <div className="home">
-                <div className="boards transitions-enabled" style={{
+                <div className="pins transitions-enabled" style={{
                     margin: "auto"
                 }}>
-                    {this._renderBoards()}
+                    {this._renderPins()}
                 </div>
             </div>
         )
@@ -74,6 +41,6 @@ class Home extends React.Component {
 }
 
 function mapStateToProps(state) {
-    return {boards: state.boards}
+    return {pins: state.pins}
 }
 export default connect(mapStateToProps, actions)(Home);

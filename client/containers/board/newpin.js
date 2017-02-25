@@ -76,14 +76,11 @@ class NewPin extends React.Component {
                                 textAlign: 'center'
                             }}>
                                 <Dropzone ref="dropzone" onDrop={this.onDrop.bind(this)}>
-                                    <div>Drop your image</div>
-                                    <div className="ui horizontal divider">Or</div>
-                                    <div>click to open</div>
+                                    <div className="ui link cards">
+                                        {this.buildImagePreview()}
+                                    </div>
                                 </Dropzone>
                                 <br></br>
-                                <div className="ui link cards">
-                                    {this.buildImagePreview()}
-                                </div>
                             </div>
                         </div>
                         <div className="ten wide column">
