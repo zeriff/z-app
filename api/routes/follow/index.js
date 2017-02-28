@@ -13,6 +13,11 @@ var bind_pin_api = function(router) {
 *     produces:
 *       - application/json
 *     parameters:
+*       - name: x-access-token
+*         description: Api access token
+*         required: true
+*         in: header
+*         type: string
 *       - name: user_id
 *         type: string
 *         description: user id to be follow
@@ -34,6 +39,11 @@ var bind_pin_api = function(router) {
 *     produces:
 *       - application/json
 *     parameters:
+*       - name: x-access-token
+*         description: Api access token
+*         required: true
+*         in: header
+*         type: string
 *       - name: user_id
 *         type: string
 *         description: user id to be un follow

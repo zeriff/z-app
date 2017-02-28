@@ -35,6 +35,11 @@ var bind_pin_api = function(router) {
 *     produces:
 *       - application/json
 *     parameters:
+*       - name: x-access-token
+*         description: Api access token
+*         required: true
+*         in: header
+*         type: string
 *       - name: title
 *         description: Board title
 *         in: formData
@@ -91,6 +96,11 @@ var bind_pin_api = function(router) {
   *     produces:
   *       - application/json
   *     parameters:
+  *       - name: x-access-token
+  *         description: Api access token
+  *         required: true
+  *         in: header
+  *         type: string
   *       - name: board_id
   *         description: Board id to be deleted
   *         in: path

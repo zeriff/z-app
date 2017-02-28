@@ -28,6 +28,12 @@ var bind_user_controller = function(router) {
 *     tags:
 *       - User
 *     description: Get All users
+*     parameters:
+*       - name: x-access-token
+*         description: Api access token
+*         required: true
+*         in: header
+*         type: string
 *     produces:
 *       - application/json
 *     responses:
@@ -67,10 +73,16 @@ var bind_user_controller = function(router) {
     /**
   * @swagger
   * /api/users/{id}:
-  *   get:
+  *   delete:
   *     tags:
   *       - User
   *     description: Delete user
+  *     parameters:
+  *       - name: x-access-token
+  *         description: Api access token
+  *         required: true
+  *         in: header
+  *         type: string
   *     produces:
   *       - application/json
   *     responses:
@@ -240,7 +252,7 @@ function register(req, res) {
             });
 
             tempuser.save().then(function(t_user) {
-                res.json({new: true, exist: false, user_id: t_user._id});
+                res.json({new: true, exist: false, user_id: t_user._idx});
             });
         }
     });

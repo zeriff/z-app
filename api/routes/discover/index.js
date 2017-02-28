@@ -26,6 +26,12 @@ var bind_api = function(router) {
   *     tags:
   *       - Discover
   *     description: Returns current user boards/Intrested boards with its associated pins
+  *     parameters:
+  *       - name: x-access-token
+  *         description: Api access token
+  *         required: true
+  *         in: header
+  *         type: string
   *     produces:
   *       - application/json
   *     responses:
