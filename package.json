@@ -4,7 +4,8 @@
   "description": "z-app",
   "main": "server.js",
   "scripts": {
-    "start": "npm-run-all --parallel watch:server watch:build",
+    "start":"webpack --config webpack.production.config.js && node server.js",
+    "start:dev": "npm-run-all --parallel watch:server watch:build",
     "test": "mocha --timeout 15000 --recursive $(find './api' -name 'test.js')",
     "watch:build": "webpack --watch --config webpack.config.js",
     "watch:server": "nodemon",
