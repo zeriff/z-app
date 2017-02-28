@@ -6,7 +6,7 @@ var Promise = require('promise');
 
 /**
 * @swagger
-* models:
+* definition:
 *   DreamBoard:
 *     properties:
 *       user_id:
