@@ -53,7 +53,7 @@ export default class UploadForm extends React.Component {
             formData.append('boards', me.state.boards);
             formData.append('title', me.state.title);
             formData.append('story', me.state.story);
-            formData.append('image_url', this.dataURItoBlob(this.props.image));
+            formData.append('image', this.dataURItoBlob(this.props.image));
 
             axios.post("/api/pins", formData, {
                 headers: {
