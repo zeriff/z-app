@@ -1,6 +1,7 @@
 //  DEPENDENCIES
 // ***********************************
-var dotenv = require('dotenv').config();
+if (process.env.NODE_ENV !== 'production')
+    require('dotenv').config()
 var app = require('./app');
 var port = process.env.PORT
 // ***********************************
@@ -9,7 +10,7 @@ var port = process.env.PORT
 // ***********************************
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
-mongoose.connect('mongodb://localhost:27017/zeriff');
+mongoose.connect(proce.env.MONGODB_URI);
 
 //  SERVER
 //************************************

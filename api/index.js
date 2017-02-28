@@ -22,7 +22,7 @@ var swaggerDefinition = {
         version: '1.0.0',
         description: 'Demonstrating Api'
     },
-    host: process.env.APP_DEV_HOST,
+    host: process.env.APP_SWAGGER_HOST,
     basePath: '/'
 };
 
