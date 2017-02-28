@@ -240,7 +240,7 @@ function register(req, res) {
             });
 
             tempuser.save().then(function(t_user) {
-                res.json({exist: false, user_id: t_user._id});
+                res.json({exist: false, user_id: t_user._id, message: "Registered, please set password!"});
             });
         }
     });

@@ -31,7 +31,7 @@ class SignIn extends React.Component {
         axios.post("/api/auth", data.formData).then(function(res) {
             if (res.data.success) {
                 storageMgr.addUserDetails(res.data.userDetails);
-                browserHistory.push("/");
+                browserHistory.push("/auth/signup");
                 toastr.info(res.data.message);
             }
             Loader.done();
