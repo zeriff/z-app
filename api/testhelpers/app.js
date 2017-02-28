@@ -6,6 +6,6 @@ if (process.env.NODE_ENV !== 'production')
 // ***********************************
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
-mongoose.connect(proce.env.MONGODB_URI);
+mongoose.connect(process.env.MONGODB_URI);
 
 module.exports = app;
