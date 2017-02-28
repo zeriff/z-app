@@ -34,7 +34,7 @@ describe("USER BOARD API => ", function() {
         supertest(app)
             .post("/api/userboards")
             .send({
-                boards: [
+                board: [
                     "Visit this is new", "One plus one"
                 ],
                 image_url: "This is totol new"

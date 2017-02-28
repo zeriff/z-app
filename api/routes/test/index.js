@@ -6,6 +6,7 @@ function getAllTests(req, res) {
 }
 
 var bind_test_controller = function(router) {
+
     router
         .route("/tests")
         .get(getAllTests);

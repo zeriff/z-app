@@ -4,6 +4,26 @@ var Profile = require("./profile");
 
 // ****************SCHEMA******************
 var Schema = mongoose.Schema;
+
+/**
+* @swagger
+* definition:
+*   User:
+*     properties:
+*       username:
+*         type: string
+*       email:
+*         type: string
+*       isAdmin:
+*         type: string
+*       password:
+*         type: string
+*       session_token:
+*         type: string
+*       google_id_token:
+*         type: string
+*/
+
 var userSchema = new Schema({
     username: {
         type: String

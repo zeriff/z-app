@@ -1,5 +1,17 @@
 var mongoose = require("mongoose");
 var Promise = require('promise');
+
+/**
+* @swagger
+* definition:
+*   Like:
+*     properties:
+*       likeable_id:
+*         type: string
+*       liker_id:
+*         type: string
+*/
+
 // **************SCHEMA*************************
 var Schema = mongoose.Schema;
 var likeSchema = new Schema({

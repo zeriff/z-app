@@ -6,6 +6,22 @@ var mongoose = require("mongoose");
 // **************SCHEMA*************************
 var Schema = mongoose.Schema;
 
+/**
+* @swagger
+* definition:
+*   Profile:
+*     properties:
+*       user_id:
+*         type: string
+*       intrests:
+*         type: array
+*         items: string
+*       firstname:
+*         type: string
+*       lastName:
+*         type: string
+*/
+
 var profileSchema = new Schema({
     user_id: {
         type: String,

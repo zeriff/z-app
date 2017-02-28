@@ -39,7 +39,7 @@ describe("Board Api", function() {
         supertest(app)
             .post("/api/boards")
             .set('x-access-token', auth_helper.getToken())
-            .send({board: "Test Board"})
+            .send({title: "Test Board"})
             .end(function(err, res) {
                 res
                     .status

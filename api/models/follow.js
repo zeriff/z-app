@@ -1,13 +1,28 @@
 var mongoose = require("mongoose");
 var Promise = require('promise');
-// **************SCHEMA*************************
 var Schema = mongoose.Schema;
+
+/**
+* @swagger
+* definition:
+*   Follow:
+*     properties:
+*       follower_id:
+*         type: string
+*       followable_id:
+*         type: string
+*/
+// **************SCHEMA*************************
 var followSchema = new Schema({
-    follower_id: String,
-    followable_id: String
+    follower_id: {
+        type: String
+    },
+    followable_id: {
+        type: String
+    }
 }, {timestamps: true});
 
-// **************SCHEMA_METHODS*****************
+// **************SCHEMA_METHODS
 
 // **************MODEL*********************
 var Follow = mongoose.model('Follow', followSchema);

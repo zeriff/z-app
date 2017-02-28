@@ -4,6 +4,21 @@
 var mongoose = require("mongoose");
 var Promise = require('promise');
 
+/**
+* @swagger
+* models:
+*   DreamBoard:
+*     properties:
+*       user_id:
+*         type: string
+*       title:
+*         type: string
+*       image_url:
+*         type: string
+*       story:
+*         type: string
+*/
+
 // **************SCHEMA*******************
 var Schema = mongoose.Schema;
 var dreamboardSchema = new Schema({

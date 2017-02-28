@@ -11,6 +11,27 @@ var Promise = require('promise');
 var constants = require('../constants');
 var UserBoard = require('./userboard');
 
+/**
+* @swagger
+* definition:
+*   Pin:
+*     properties:
+*       user_id:
+*         type: string
+*       title:
+*         type: string
+*       story:
+*         type: string
+*       type:
+*         type: string
+*       video_url:
+*         type: string
+*       image_url:
+*         type: string
+*       boards:
+*         type: [string]
+*/
+
 // **************SCHEMA*******************
 var pinSchema = new Schema({
     user_id: String,
@@ -45,9 +66,7 @@ module.exports = Pin;
 function get_validated_boards(boards) {
     if (boards.length == 0) {
         let today = new Date();
-        let d_array = today
-            .toString()
-            .split(" ");
+        let d_array = today.toString().split(" ");
         d_array.splice(4, d_array.length);
         let default_board = d_array.join(" ");
         boards.push(default_board);
@@ -96,9 +115,7 @@ module.exports.createPin = function(current_user, pinParams) {
         });
 
         assign_pin_image_and_add_to_UserBoard.then(function() {
-            newPin
-                .save()
-                .then(resolve);
+            newPin.save().then(resolve);
         });
     });
 }
@@ -119,10 +136,9 @@ module.exports.delete = function(current_user, pin_id) {
 
         remove_pin.then(function(p) {
             if (p != null) {
-                AwsUploader
-                    .deleteFile(current_user, "pins", pin_id, function(success) {
-                        resolve(success);
-                    });
+                AwsUploader.deleteFile(current_user, "pins", pin_id, function(success) {
+                    resolve(success);
+                });
             } else {
                 resolve(false);
             }
@@ -150,18 +166,14 @@ module.exports.edit = function(current_user, pin_id, pinParams) {
             multi: true,
             new: true
         }
-        Pin
-            .findByIdAndUpdate(pin_id, update_object, options)
-            .then(function(new_pin) {
-                UserBoard
-                    .createManyDreamBoards(current_user, {
-                        boards: pinParams.boards,
-                        image_url: new_pin.image_url,
-                        story: new_pin.story
-                    })
-                    .then(function(boards) {
-                        resolve({pin: new_pin, boards: boards})
-                    });
+        Pin.findByIdAndUpdate(pin_id, update_object, options).then(function(new_pin) {
+            UserBoard.createManyDreamBoards(current_user, {
+                boards: pinParams.boards,
+                image_url: new_pin.image_url,
+                story: new_pin.story
+            }).then(function(boards) {
+                resolve({pin: new_pin, boards: boards})
             });
+        });
     });
 }

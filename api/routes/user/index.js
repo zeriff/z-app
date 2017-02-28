@@ -7,19 +7,155 @@ var Follow = require('../../models/follow');
 var UserBoard = require('../../models/userboard');
 
 var bind_user_controller = function(router) {
-    router
-        .route("/users")
-        .get(auth.authorize_admin, getAllUsers)
-        .post(register);
-    router
-        .route("/users/:id")
-        .delete(auth.authorize_user, deleteUser);
-    router
-        .route("/users/done")
-        .post(finalize_registration);
-    router
-        .route("/users/:id/profile")
-        .get(getUserinfo);
+    /**
+* @swagger
+* definition:
+*   LOGIN_WITH_GMAIL_RESPONSE:
+*     properties:
+*       tokenObj:
+*         type: object
+*       profileObj:
+*         type: object
+*
+*
+*
+*/
+
+    /**
+* @swagger
+* /api/users:
+*   get:
+*     tags:
+*       - User
+*     description: Get All users
+*     produces:
+*       - application/json
+*     responses:
+*       200:
+*         description: Array of users
+*         schema:
+*           properties:
+*             users:
+*               type: array
+*               items:
+*                 $ref: "#/definitions/User"
+*   post:
+*     tags:
+*       - User
+*     description: Create new User(Strictly after login with gmail)
+*     consumes:
+*       - application/x-www-form-urlencoded
+*     parameters:
+*       - name: gmail_respose
+*         description: Direct response from login with gmail
+*         schema:
+*           $ref: "#/definitions/LOGIN_WITH_GMAIL_RESPONSE"
+*     produces:
+*       - application/json
+*     responses:
+*       200:
+*         description: Array of users
+*         schema:
+*           properties:
+*             users:
+*               type: array
+*               items:
+*                 $ref: "#/definitions/User"
+*/
+    router.route("/users").get(auth.authorize_admin, getAllUsers).post(register);
+
+    /**
+  * @swagger
+  * /api/users/{id}:
+  *   get:
+  *     tags:
+  *       - User
+  *     description: Delete user
+  *     produces:
+  *       - application/json
+  *     responses:
+  *       200:
+  *         description: Successfully deleted user
+  *         schema:
+  *           properties:
+  *             success:
+  *               type: boolean
+  *             message:
+  *               type: string
+  */
+
+    router.route("/users/:id").delete(auth.authorize_user, deleteUser);
+    /**
+      * @swagger
+      * /api/users/done:
+      *   get:
+      *     tags:
+      *       - User
+      *     description: Finalize registration after getting Login with gmail success
+      *     consumes:
+      *       - application/x-www-form-urlencoded
+      *     produces:
+      *       - application/json
+      *     parameters:
+      *       - name: user_id
+      *         description: Temp user id
+      *         type: string
+      *         in: formData
+      *         required: true
+      *       - name: password
+      *         in: formData
+      *         description: User password
+      *         type: string
+      *         required: true
+      *       - name: term
+      *         description: Terms and condition accept check
+      *         in: formData
+      *         type: boolean
+      *         required: true
+      *     responses:
+      *       200:
+      *         description: Successfully Authenticate
+      *         schema:
+      *           properties:
+      *             success:
+      *               type: boolean
+      *             message:
+      *               type: string
+      *             userDetails:
+      *               schema:
+      *                 properties:
+      *                   token:
+      *                     type: string
+      *                   username:
+      *                     type: string
+      *                   profile:
+      *                      $ref: "#/definitions/Profile"
+      */
+
+    router.route("/users/done").post(finalize_registration);
+
+    /**
+  * @swagger
+  * /api/users/{id}/profile:
+  *   get:
+  *     tags:
+  *       - User
+  *     description: Get user Profile
+  *     produces:
+  *       - application/json
+  *     parameters:
+  *       - name: id
+  *         description: User id
+  *         type: string
+  *         in: path
+  *         required: true
+  *     responses:
+  *       200:
+  *         description: Get User profile
+  *         schema:
+  *           $ref: "#/definitions/Profile"
+  */
+    router.route("/users/:id/profile").get(getUserinfo);
 }
 
 function getUserinfo(req, res) {
@@ -44,19 +180,17 @@ function getUserinfo(req, res) {
         return UserBoard.getMemoryBoards(user_id);
     });
 
-    Promise
-        .all([get_profile, get_followers, get_following, get_memory_boards])
-        .then(function(userinfo) {
-            res.json({
-                avatar: userinfo[0].avatar,
-                avatar: userinfo[0].intrests,
-                avatar: userinfo[0].gender,
-                avatar: userinfo[0].name,
-                followers: userinfo[1].length,
-                following: userinfo[2].length,
-                memories: userinfo[3].length
-            });
+    Promise.all([get_profile, get_followers, get_following, get_memory_boards]).then(function(userinfo) {
+        res.json({
+            avatar: userinfo[0].avatar,
+            avatar: userinfo[0].intrests,
+            avatar: userinfo[0].gender,
+            avatar: userinfo[0].name,
+            followers: userinfo[1].length,
+            following: userinfo[2].length,
+            memories: userinfo[3].length
         });
+    });
 
 }
 
@@ -64,27 +198,22 @@ function finalize_registration(req, res) {
     let temp_user_query = {
         _id: req.body.user_id
     };
-    TempUser
-        .findOne(temp_user_query)
-        .then(function(t_user) {
-            if (t_user) {
-                if (req.body.password) {
-                    User
-                        .createNewUserProfile(t_user, req.body.password)
-                        .then(function(user) {
-                            autheticateUser_after_signup(user.new_user.username, user.new_user.password, user.new_profile)
-                                .then(function(response) {
-                                    t_user.remove();
-                                    res.json(response);
-                                });
-                        });
-                } else {
-                    res.json({success: false, message: "Please set your password!"})
-                }
+    TempUser.findOne(temp_user_query).then(function(t_user) {
+        if (t_user) {
+            if (req.body.password) {
+                User.createNewUserProfile(t_user, req.body.password).then(function(user) {
+                    autheticateUser_after_signup(user.new_user.username, user.new_user.password, user.new_profile).then(function(response) {
+                        t_user.remove();
+                        res.json(response);
+                    });
+                });
             } else {
-                res.json({success: false, message: "Something went wrong please try again!"})
+                res.json({success: false, message: "Please set your password!"})
             }
-        });
+        } else {
+            res.json({success: false, message: "Something went wrong please try again!"})
+        }
+    });
 }
 
 function register(req, res) {
@@ -96,44 +225,36 @@ function register(req, res) {
     let user_exist_query = {
         email: profile.email
     }
-    User
-        .findOne(user_exist_query)
-        .then(function(user) {
-            if (user) {
-                res.json({new: false, username: user.username, message: "Already Registered please signin!"})
-            } else {
-                let tempuser = new TempUser({
-                    email: profile.email,
-                    username: "@" + profile
-                        .givenName
-                        .toLowerCase(),
-                    name: profile.name,
-                    access_token: tokens.access_token,
-                    avatar: profile.imageUrl,
-                    google_id: profile.googleId,
-                    id_token: tokens.id_token
-                });
+    User.findOne(user_exist_query).then(function(user) {
+        if (user) {
+            res.json({new: false, username: user.username, message: "Already Registered please signin!"})
+        } else {
+            let tempuser = new TempUser({
+                email: profile.email,
+                username: "@" + profile.givenName.toLowerCase(),
+                name: profile.name,
+                access_token: tokens.access_token,
+                avatar: profile.imageUrl,
+                google_id: profile.googleId,
+                id_token: tokens.id_token
+            });
 
-                tempuser
-                    .save()
-                    .then(function(t_user) {
-                        res.json({exist: false, user_id: t_user._id});
-                    });
-            }
-        });
+            tempuser.save().then(function(t_user) {
+                res.json({exist: false, user_id: t_user._id});
+            });
+        }
+    });
 
 }
 
 function getAllUsers(req, res) {
-    User
-        .find({})
-        .then(function(users) {
-            res.json({
-                users: users
-                    ? users
-                    : []
-            })
-        });
+    User.find({}).then(function(users) {
+        res.json({
+            users: users
+                ? users
+                : []
+        })
+    });
 }
 
 function deleteUser(req, res) {
@@ -142,7 +263,7 @@ function deleteUser(req, res) {
         if (err) {
             throw err
         }
-        res.json({message: "Successfully deleted"})
+        res.json({success: true, message: "Successfully deleted"})
     });
 }
 

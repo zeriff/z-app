@@ -16,7 +16,7 @@ export function load_discover_boards() {
             }
         }).then(function(res) {
             console.log("boards loading : ", res);
-            store.dispatch(loadBoards(res.data.boards));
+            store.dispatch(loadBoards(res.data));
         });
     }
 }

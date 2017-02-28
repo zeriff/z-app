@@ -17,7 +17,7 @@ export default class SliderBoard extends React.Component {
     render() {
         return (
             <div className="custom">
-                <Parallax bgImage={_.sample(this.props.boards).image_url} strength={150}>
+                <Parallax bgImage={_.sample(this.props.boards).image_url} strength={70}>
                     <div className="customdiv">
                         <div className="boardtitle">
                             {this.props.title}

@@ -6,10 +6,164 @@ var upload = multer({dest: "./uploads"});
 var AwsUploader = require("./../../utils/image_uploader");
 
 var bind_pin_api = function(router) {
+
+    /**
+  * @swagger
+  * definition:
+  *   PinResponse:
+  *     properties:
+  *       success:
+  *         type: boolean
+  *       message:
+  *         type: string
+  *       pin:
+  *         $ref: "#/definitions/Pin"
+  */
+
+    /**
+* @swagger
+* definition:
+*   GenResponse:
+*     properties:
+*       success:
+*         type: boolean
+*       message:
+*         type: string
+*/
+    /**
+* @swagger
+* /api/pins:
+*   get:
+*     tags:
+*       - Pins
+*     description: Returns All pins associated with current user
+*     produces:
+*       - application/json
+*     responses:
+*       200:
+*         description: successfully fetched pins
+*         schema:
+*           properties:
+*             pins:
+*               type: array
+*               items:
+*                 $ref: "#/definitions/Pin"
+*
+*   post:
+*     tags:
+*       - Pins
+*     description: Create new pin
+*     consumes:
+*       - application/x-www-form-urlencoded
+*     produces:
+*       - application/json
+*     parameters:
+*       - name: title
+*         description: Pin title
+*         in: formData
+*         required: true
+*         type: string
+*       - name: image
+*         description: Image File
+*         in: formData
+*         type: file
+*         required: true
+*       - name: boards
+*         description: boards of the pin
+*         in: formData
+*         type: string
+*         required: true
+*       - name: story
+*         description: story of the pin
+*         in: formData
+*         type: string
+*         required: true
+*     responses:
+*       200:
+*         description: Successfully created the pin.
+*         schema:
+*            $ref: '#/definitions/PinResponse'
+*/
+
     router
         .route("/pins")
         .get(auth.authorize_user, getAll)
-        .post(auth.authorize_user, upload.single('image_url'), createPin);
+        .post(auth.authorize_user, upload.single('image'), createPin);
+
+    /**
+* @swagger
+* /api/pins/{id}:
+*   get:
+*     tags:
+*       - Pins
+*     description: Returns single pin associated with pin id
+*     produces:
+*       - application/json
+*     parameters:
+*       - name: id
+*         description: Pin id
+*         in: path
+*         required: true
+*         type: string
+*     responses:
+*       200:
+*         description: A single Pin
+*         schema:
+*           $ref: '#/definitions/Pin'
+*   put:
+*     tags:
+*       - Pins
+*     description: Edits single pin associated with pin id
+*     produces:
+*       - application/json
+*     parameters:
+*       - name: title
+*         description: Pin title
+*         in: formData
+*         required: false
+*         type: string
+*       - name: boards
+*         description: boards of the pin
+*         in: formData
+*         type: string
+*         required: false
+*       - name: story
+*         description: story of the pin
+*         in: formData
+*         type: string
+*         required: false
+*     responses:
+*       200:
+*         description: Updated fields of the pin
+*         schema:
+*           properties:
+*             success:
+*               type: boolean
+*             message:
+*               type: string
+*             pin:
+*               $ref: "#/definitions/Pin"
+*
+*   delete:
+*     tags:
+*       - Pins
+*     description: Deletes single pin associated with pin id
+*     produces:
+*       - application/json
+*     parameters:
+*       - name: id
+*         description: Pin id
+*         in: path
+*         required: true
+*         type: string
+*     responses:
+*       200:
+*         description: Successfully deleted
+*         schema:
+*           $ref: "#/definitions/GenResponse"
+*
+*/
+
     router
         .route("/pins/:id")
         .delete(auth.authorize_user, authorize_resource, deletePin)
@@ -86,7 +240,7 @@ function createPin(req, res) {
         .createPin(current_user, pinParams)
         .then(function(pin) {
             console.log("creatd successfully")
-            res.json({success: true, message: "successfully created!", pin: pin});
+            res.json({success: true, message: "Successfully created!", pin: pin});
         })
 }
 
@@ -129,7 +283,7 @@ function editPin(req, res) {
     Pin
         .edit(current_user, pin_id, pinParams)
         .then(function(update) {
-            res.json({pin: update.pin, boards: update.boards, success: true, message: "Updated successfully"})
+            res.json({pin: update.pin, success: true, message: "Updated successfully"})
         });
 }
 

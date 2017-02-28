@@ -23,7 +23,7 @@ describe("Like Api", function() {
         });
     });
 
-    it("GET /api/like/:pin_id => Should like Pin", function(done) {
+    it("GET /api/likes/:pin_id => Should like Pin", function(done) {
         supertest(app).get("/api/like/" + pin._id).set('x-access-token', auth_helper.getToken()).end(function(err, res) {
             res.body.success.should.equal(true);
             Like.findOne({likeable_id: pin._id}).then(function(like) {
@@ -33,7 +33,7 @@ describe("Like Api", function() {
         });
     });
 
-    it("GET /api/like/:pin_id/likes => Should get likes for Pin", function(done) {
+    it("GET /api/likes/:pin_id/count => Should get likes for Pin", function(done) {
         supertest(app).get("/api/like/" + pin._id + "/likes").end(function(err, res) {
             res.status.should.equal(200);
             res.body.should.have.property('likes');
@@ -41,7 +41,7 @@ describe("Like Api", function() {
         });
     });
 
-    it("GET /api/like/status/:pin_id => Should get like status with no user session", function(done) {
+    it("GET /api/likes/:pin_id/status => Should get like status with no user session", function(done) {
         supertest(app).get("/api/like/status/" + pin._id).end(function(err, res) {
             res.status.should.equal(200);
             res.body.should.have.property("liked");
@@ -52,7 +52,7 @@ describe("Like Api", function() {
         });
     });
 
-    it("GET /api/like/status/:pin_id => Should get like status with user session", function(done) {
+    it("GET /api/likes/:pin_id/status => Should get like status with user session", function(done) {
         supertest(app).get("/api/like/status/" + pin._id).set('x-access-token', auth_helper.getToken()).end(function(err, res) {
             res.status.should.equal(200);
             res.body.should.have.property("liked");
@@ -63,7 +63,7 @@ describe("Like Api", function() {
         });
     });
 
-    it("DELETE  /api/like/:pin_id => Should unlike Pin", function(done) {
+    it("DELETE  /api/likes/:pin_id => Should unlike Pin", function(done) {
         supertest(app).delete("/api/like/" + pin._id).set('x-access-token', auth_helper.getToken()).end(function(err, res) {
             res.status.should.equal(200);
             res.body.success.should.equal(true);

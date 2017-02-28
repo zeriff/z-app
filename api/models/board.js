@@ -5,6 +5,16 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 // OBSOLETE
 var Promise = require("promise");
+
+/**
+* @swagger
+* definition:
+*   Board:
+*     properties:
+*       title:
+*         type: string
+*/
+
 // **************SCHEMA*******************
 var boardSchema = new Schema({
     title: {

@@ -4,6 +4,21 @@
 var mongoose = require("mongoose");
 var Promise = require('promise');
 
+/**
+* @swagger
+* definition:
+*   UserBoard:
+*     properties:
+*       user_id:
+*         type: string
+*       title:
+*         type: string
+*       image_url:
+*         type: string
+*       story:
+*         type: string
+*/
+
 // **************SCHEMA*******************
 var Schema = mongoose.Schema;
 var userboardSchema = new Schema({
@@ -28,34 +43,28 @@ module.exports = UserBoard;
 module.exports.createDreamBoard = function(current_user, board_params) {
     let query = {
         user_id: current_user._id,
-        title: board_params
-            .title
-            .trim()
+        title: board_params.title.trim()
     }
-    return UserBoard
-        .findOne(query)
-        .then(function(board) {
-            if (board) {
-                return board.update(board_params, {upsert: true});
-            } else {
-                board_params.user_id = current_user._id;
-                let d_board = new UserBoard(board_params);
-                return d_board.save();
-            }
-        });
+    return UserBoard.findOne(query).then(function(board) {
+        if (board) {
+            return board.update(board_params, {upsert: true});
+        } else {
+            board_params.user_id = current_user._id;
+            let d_board = new UserBoard(board_params);
+            return d_board.save();
+        }
+    });
 }
 
 module.exports.createManyDreamBoards = function(current_user, b_params) {
     let board_promises = [];
-    b_params
-        .boards
-        .forEach(function(b) {
-            board_promises.push(UserBoard.createDreamBoard(current_user, {
-                title: b.trim(),
-                image_url: b_params.image_url,
-                story: b_params.story
-            }))
-        });
+    b_params.boards.forEach(function(b) {
+        board_promises.push(UserBoard.createDreamBoard(current_user, {
+            title: b.trim(),
+            image_url: b_params.image_url,
+            story: b_params.story
+        }))
+    });
     return Promise.all(board_promises);
 }
 

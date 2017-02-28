@@ -3,6 +3,44 @@ var UserBoard = require("../../models/userboard");
 var Pin = require("../../models/pin");
 
 var bind_api = function(router) {
+
+    /**
+  * @swagger
+  * definition:
+  *   UserBoard:
+  *     properties:
+  *       user_id:
+  *         type: string
+  *       title:
+  *         type: string
+  *       story:
+  *         type: string
+  *       image_url:
+  *         type: string
+  */
+
+    /**
+  * @swagger
+  * /api/discover:
+  *   get:
+  *     tags:
+  *       - Discover
+  *     description: Returns current user boards/Intrested boards with its associated pins
+  *     produces:
+  *       - application/json
+  *     responses:
+  *       200:
+  *         description: Successfully Fetched an arrray of user boards
+  *         schema:
+  *           properties:
+  *             title:
+  *               type: string
+  *             pins:
+  *               type: array
+  *               items:
+  *                 $ref: "#/definitions/Pin"
+  */
+
     router.route("/discover").get(discoverboards)
 }
 
@@ -38,7 +76,7 @@ function discoverboards(req, res) {
                 json.push({title: board.title, pins: result[index]})
             });
             console.log(json);
-            res.json({boards: json});
+            res.json(json);
         })
     });
 

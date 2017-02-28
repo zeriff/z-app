@@ -52,7 +52,7 @@ export default class ImageForm extends React.Component {
             formData.append('boards', me.state.boards);
             formData.append('title', me.state.title);
             formData.append('story', me.state.story);
-            formData.append('image_url', new Blob(me.state.files));
+            formData.append('image', new Blob(me.state.files));
 
             axios.post("/api/pins", formData, {
                 headers: {
