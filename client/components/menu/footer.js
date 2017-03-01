@@ -2,13 +2,37 @@ import React from 'react';
 import {Icon, Menu} from 'semantic-ui-react'
 import {Link} from 'react-router';
 import {Grid, Button, Header, Modal} from 'semantic-ui-react'
+import {browserHistory} from 'react-router';
 
 export default class Footer extends React.Component {
     state = {
         activeItem: 'home',
         cameramodal: false
     }
-    handleItemClick = (e, {name}) => this.setState({activeItem: name})
+    handleItemClick = function(e, {name}) {
+        this.setState({activeItem: name})
+        switch (name) {
+            case "home":
+                browserHistory.push("/");
+                masonry.reload("pins");
+                break;
+            case "discover":
+                browserHistory.push("/discover");
+                masonry.reload("boards");
+                break;
+            case "you":
+                browserHistory.push("/you");
+                masonry.reload("boards");
+                break;
+            case "camera":
+                browserHistory.push("/camera");
+                break;
+            case "notifications":
+                browserHistory.push("/notifications");
+                break;
+        }
+    }
+    // handleItemClick = (e, {name}) => this.setState({activeItem: name})
 
     componentDidMount() {
         this.handleFooterState();
@@ -35,10 +59,10 @@ export default class Footer extends React.Component {
         const {activeItem} = this.state
         return (
             <Menu widths={5} fixed={"bottom"} borderless={true} className="f_menubar">
-                <Menu.Item as={Link} to='/' name='home' active={activeItem === 'home'} onClick={this.handleItemClick}>
+                <Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick.bind(this)}>
                     <img className="ui m_image circular image" src="/img/logo.png"></img>
                 </Menu.Item>
-                <Menu.Item as={Link} to='/discover' name='discover' active={activeItem === 'discover'} onClick={this.handleItemClick}>
+                <Menu.Item name='discover' active={activeItem === 'discover'} onClick={this.handleItemClick.bind(this)}>
                     <Icon name='star'/>
                 </Menu.Item>
 
@@ -70,10 +94,10 @@ export default class Footer extends React.Component {
                     </Modal.Content>
                 </Modal>
 
-                <Menu.Item as={Link} to='/notifications' name='notifications' active={activeItem === 'notifications'} onClick={this.handleItemClick}>
+                <Menu.Item name='notifications' active={activeItem === 'notifications'} onClick={this.handleItemClick.bind(this)}>
                     <Icon name='inbox'/>
                 </Menu.Item>
-                <Menu.Item as={Link} to='/you' name='you' active={activeItem === 'you'} onClick={this.handleItemClick}>
+                <Menu.Item name='you' active={activeItem === 'you'} onClick={this.handleItemClick.bind(this)}>
                     <Icon name='smile'/>
                 </Menu.Item>
             </Menu>
