@@ -10,14 +10,14 @@ var bind_auth_api = function(router) {
 *   post:
 *     tags:
 *       - Authentication
-*     description: Authenticate user by username password
+*     description: Authenticate user by Email and password
 *     consumes:
 *       - application/x-www-form-urlencoded
 *     produces:
 *       - application/json
 *     parameters:
-*       - name: username
-*         description: Username
+*       - name: email
+*         description: Email Id
 *         in: formData
 *         type: string
 *         required: true

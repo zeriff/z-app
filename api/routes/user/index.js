@@ -168,6 +168,22 @@ var bind_user_controller = function(router) {
   *           $ref: "#/definitions/Profile"
   */
     router.route("/users/:id/profile").get(getUserinfo);
+
+    router.route("/users/:id/userstates").get(getUserStates);
+
+}
+
+function getUserStates(req, res) {
+    let user_id = req.body.id;
+    let followers_query = {
+        followable_id: user_id
+    }
+    let getFollowers = Follow.find(followers_query);
+    let followings_query = {
+        follower_id: user_id
+    }
+    let getFollowings = Follow.find(followings_query);
+    return Promise.all([getFollowers, getFollowings]);
 }
 
 function getUserinfo(req, res) {
