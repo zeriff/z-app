@@ -55,7 +55,7 @@ function discoverboards(req, res) {
     let user_board_query = {
         user_id: current_user._id
     }
-    let find_user_boards = UserBoard.find(user_board_query, "title", {
+    let find_user_boards = UserBoard.find({}, "title", {
         sort: {
             'updatedAt': -1
         }
