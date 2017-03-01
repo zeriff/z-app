@@ -11,7 +11,7 @@ export default class Application extends React.Component {
                     </a>
                     <div className="right menu">
                         <div className="item">
-                            <a href="/auth/signin" className="ui mini basic black button">Signin</a>
+                            <a href="/auth" className="ui mini basic black button">Signin</a>
                         </div>
                         <div className="item">
                             <a href="/auth/signup" className="ui mini basic black button">Signup</a>

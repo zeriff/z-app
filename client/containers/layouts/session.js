@@ -7,7 +7,7 @@ export default class Session extends React.Component {
     logout() {
         storageMgr.removeUser();
         setTimeout(function() {
-            browserHistory.push("/auth/signin");
+            browserHistory.push("/auth");
         }, 500);
     }
 

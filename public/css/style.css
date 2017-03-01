@@ -2,7 +2,7 @@
   visibility: hidden;
 }*/
 .f_menubar{
-  visibility: hidden;
+  /*visibility: hidden;*/
 }
 .custom{
   padding: 5px;
@@ -38,7 +38,7 @@
   src:url('/fonts/lemonmilk.otf');
 }
 .children{
-  padding-top: 60px;
+  /*padding-top: 60px;*/
   padding-bottom: 60px;
 }
 

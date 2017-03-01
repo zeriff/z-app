@@ -7,7 +7,6 @@ export default class App extends React.Component {
     render() {
         return (
             <div className="main_content">
-                <TopMenu></TopMenu>
                 <div className="children">
                     {this.props.children}
                 </div>

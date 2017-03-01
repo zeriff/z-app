@@ -20,6 +20,10 @@ var Schema = mongoose.Schema;
 *         type: string
 *       lastName:
 *         type: string
+*       avatar:
+*         type: string
+*       gender:
+*         type: string
 */
 
 var profileSchema = new Schema({

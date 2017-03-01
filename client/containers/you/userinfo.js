@@ -29,7 +29,7 @@ export default class UserInfo extends React.Component {
                     <Grid.Row columns={2}>
                         <Grid.Column>
                             <br></br>
-                            <AvatarUploader image={userDetails.profile.avatar}></AvatarUploader>
+
                         </Grid.Column>
                         <Grid.Column>
                             <div className="userinfo">
@@ -61,51 +61,4 @@ export default class UserInfo extends React.Component {
             </Container>
         );
     }
-
-    // render() {
-    //     let userDetails = storageMgr.getUserDetails();
-    //     console.log(userDetails);
-    //     return (
-    //         <div className="ui container">
-    //             <Grid centered columns={1}>
-    //                 <Grid.Row columns={3}>
-    //                     <Grid.Column>
-    //                         <br></br>
-    //                         <br></br>
-    //                         <button className="ui circular big yellow icon button">
-    //                             <i className="inbox icon"></i>
-    //                         </button>
-    //
-    //                     </Grid.Column>
-    //                     <Grid.Column>
-    //                         <br></br>
-    //                         <AvatarUploader image={userDetails.avatar}></AvatarUploader>
-    //                     </Grid.Column>
-    //                     <Grid.Column>
-    //                         <br></br>
-    //                         <br></br>
-    //                         <button className="ui circular big blue icon button">
-    //                             <i className="add user icon"></i>
-    //                         </button>
-    //                         <button className="ui circular red button" onClick={this.Logout}>
-    //                             Logout
-    //                         </button>
-    //                     </Grid.Column>
-    //                 </Grid.Row>
-    //                 <Grid.Row columns={1}>
-    //                     <div className="ui content">
-    //                         <div className="ui sub header pintitle">
-    //                             {userDetails.username}</div>
-    //                         Coder & Geek
-    //                     </div>
-    //                 </Grid.Row>
-    //                 <Grid.Row columns={1}>
-    //                     <Grid.Column>
-    //                         <UserStates></UserStates>
-    //                     </Grid.Column>
-    //                 </Grid.Row>
-    //             </Grid>
-    //         </div>
-    //     );
-    // }
 }

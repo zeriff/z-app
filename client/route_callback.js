@@ -7,7 +7,7 @@ import {browserHistory} from 'react-router';
 export function load_discover_boards() {
     var userdetails = storageMgr.getUserDetails()
     if (userdetails == null) {
-        browserHistory.push("/auth/signin");
+        browserHistory.push("/auth");
         return
     } else {
         axios.get('/api/discover', {
@@ -24,7 +24,7 @@ export function load_discover_boards() {
 export function load_user_pins() {
     var userdetails = storageMgr.getUserDetails()
     if (userdetails == null) {
-        browserHistory.push("/auth/signin");
+        browserHistory.push("/auth");
         return
     } else {
         axios.get('/api/pins', {
@@ -62,7 +62,7 @@ export function checkUserSession() {
 export function getUsers() {
     var userdetails = storageMgr.getUserDetails()
     if (userdetails == null) {
-        browserHistory.push("/auth/signin");
+        browserHistory.push("/auth");
         return
     } else {
         axios.get('/api/admin/users', {
