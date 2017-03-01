@@ -252,7 +252,7 @@ function register(req, res) {
             });
 
             tempuser.save().then(function(t_user) {
-                res.json({new: true, exist: false, user_id: t_user._idx});
+                res.json({new: true, exist: false, user_id: t_user._id});
             });
         }
     });
