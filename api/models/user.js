@@ -91,7 +91,7 @@ module.exports.createNewUserProfile = function(userdata, newpassword) {
         user.save().then(function(new_user) {
             let profile = new Profile({user_id: new_user._id, avatar: userdata.avatar});
             profile.save().then(function(new_profile) {
-                resolve({new_user, new_profile});
+                resolve({new_user: new_user, new_profile: new_profile});
             });
         });
 
