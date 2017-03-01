@@ -1,3 +1,10 @@
+
+.ui.card {
+    border-radius: 0px;
+}
+.ui.card .image{
+  border-radius: 0px !important;
+}
 /*.ui.top.sidebar{
   visibility: hidden;
 }*/
