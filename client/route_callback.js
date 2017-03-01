@@ -15,7 +15,6 @@ export function load_discover_boards() {
                 "x-access-token": storageMgr.getToken()
             }
         }).then(function(res) {
-            console.log("boards loading : ", res);
             store.dispatch(loadBoards(res.data));
         });
     }
@@ -24,7 +23,9 @@ export function load_discover_boards() {
 export function load_user_pins() {
     var userdetails = storageMgr.getUserDetails()
     if (userdetails == null) {
-        browserHistory.push("/auth");
+        setTimeout(function() {
+            browserHistory.push("/auth");
+        }, 400);
         return
     } else {
         axios.get('/api/pins', {
@@ -32,7 +33,6 @@ export function load_user_pins() {
                 "x-access-token": storageMgr.getToken()
             }
         }).then(function(res) {
-            console.log("boards loading : ", res);
             store.dispatch(loadPins(res.data.pins));
         });
     }
@@ -45,7 +45,6 @@ export function load_user_boards() {
             "x-access-token": storageMgr.getToken()
         }
     }).then(function(res) {
-        console.log(res.data);
         store.dispatch(loadUserBoards(res.data.userboards));
     });
 }
@@ -62,7 +61,9 @@ export function checkUserSession() {
 export function getUsers() {
     var userdetails = storageMgr.getUserDetails()
     if (userdetails == null) {
-        browserHistory.push("/auth");
+        setTimeout(function() {
+            browserHistory.push("/auth");
+        }, 400);
         return
     } else {
         axios.get('/api/admin/users', {
@@ -70,7 +71,6 @@ export function getUsers() {
                 "x-access-token": storageMgr.getToken()
             }
         }).then(function(res) {
-            console.log(res.data);
             store.dispatch(loadUsers(res.data.users));
         });
     }

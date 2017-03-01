@@ -81,7 +81,6 @@ function discoverboards(req, res) {
             userboards.forEach(function(board, index) {
                 json.push({title: board.title, pins: result[index]})
             });
-            console.log(json);
             res.json(json);
         })
     });

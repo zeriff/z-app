@@ -95,7 +95,6 @@ module.exports.createPin = function(current_user, pinParams) {
                 let file = pinParams.file;
                 if (file) {
                     var dirPath = "pins";
-                    console.log("UPloading images:", pinParams);
                     AwsUploader.upload(current_user, file, dirPath, newPin._id, function(data) {
                         r(data);
                     });

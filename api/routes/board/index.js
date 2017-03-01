@@ -132,7 +132,6 @@ function getAllBoards(req, res) {
 
 // POST /api/boards
 function createBoard(req, res) {
-    console.log(req);
     let boardTitle = req.body.title;
     Board.create(boardTitle.trim()).then(function(board) {
         res.json({success: true, message: "Board Successfully created!", board: board})

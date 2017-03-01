@@ -19,7 +19,9 @@ export default class UserInfo extends React.Component {
 
     Logout() {
         storageMgr.removeUser();
-        browserHistory.push('/auth');
+        setTimeout(function() {
+            browserHistory.push("/auth");
+        }, 400);
     }
     render() {
         let userDetails = storageMgr.getUserDetails();

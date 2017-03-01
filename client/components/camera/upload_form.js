@@ -64,7 +64,6 @@ export default class UploadForm extends React.Component {
                 toastr.info(res.data.message);
                 browserHistory.push("/");
                 this.props.modalCallback();
-                console.log(res)
             });
         }
     }
@@ -94,7 +93,6 @@ export default class UploadForm extends React.Component {
     }
 
     render() {
-        console.log(this.props.image);
         return (
             <div className="ui container">
                 <form className="ui form" onSubmit={this.onFormSubmit.bind(this)}>

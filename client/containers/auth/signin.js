@@ -19,7 +19,7 @@ class SignIn extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: ""
+            email: ""
         }
     }
 
@@ -38,8 +38,8 @@ class SignIn extends React.Component {
         });
     }
 
-    onUsernameChange(e) {
-        this.setState({username: e.target.value})
+    onEmailChange(e) {
+        this.setState({email: e.target.value})
     }
     onPasswordChange(e) {
         this.setState({password: e.target.value})
@@ -50,13 +50,10 @@ class SignIn extends React.Component {
             if (res.data.new == true) {
                 browserHistory.push("/auth/signup?id=" + res.data.user_id)
             } else {
-                me.setState({username: res.data.username})
+                me.setState({email: res.data.email})
                 toastr.info(res.data.message);
             }
         });
-    }
-    usenameOnChange(e) {
-        this.setState({username: e.target.value});
     }
     render() {
         return (
@@ -78,7 +75,7 @@ class SignIn extends React.Component {
                         <Form onSubmit={this.onFormSubmit}>
                             <Segment stacked>
                                 <Form.Field>
-                                    <input type="text" name="username" placeholder="Username" value={this.state.username} onChange={this.usenameOnChange.bind(this)}/>
+                                    <input type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.onEmailChange.bind(this)}/>
                                 </Form.Field>
                                 <Form.Field>
                                     <input type="password" name="password" placeholder="Password"/>

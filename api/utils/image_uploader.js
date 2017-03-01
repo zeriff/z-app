@@ -26,7 +26,6 @@ var image_uploader = {
 
     },
     upload: function(current_user, file, dirPath, filename, callback) {
-        console.log("in image uploader");
         image_uploader.setUpS3();
         let s3 = new AWS.S3();
         var bodystream = fs.createReadStream(file.path);

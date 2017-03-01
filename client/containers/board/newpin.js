@@ -58,7 +58,6 @@ class NewPin extends React.Component {
                 }
             }).then(function(res) {
                 toastr.info(res.data.message);
-                console.log(res)
             });
         }
     }

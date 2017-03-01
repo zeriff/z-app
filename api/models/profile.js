@@ -32,8 +32,7 @@ var profileSchema = new Schema({
         index: true
     },
     intrests: {
-        type: [String],
-        index: true
+        type: [String]
     },
     firstname: {
         type: String,
@@ -47,8 +46,7 @@ var profileSchema = new Schema({
         type: String
     },
     phone: {
-        type: String,
-        unique: true
+        type: String
     },
     birth_date: {
         type: String

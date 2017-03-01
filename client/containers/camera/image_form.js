@@ -61,7 +61,6 @@ export default class ImageForm extends React.Component {
             }).then(function(res) {
                 Loader.done();
                 toastr.info(res.data.message);
-                console.log(res)
             });
         }
     }

@@ -49,11 +49,10 @@ var bind_auth_api = function(router) {
 }
 
 function autheticateUser(req, res) {
-    let username = req.body.username;
+    let email = req.body.email;
     let password = req.body.password;
-
     let query = {
-        username: username
+        email: email
     }
     let find_user = User.findOne(query);
     find_user.then(function(user) {

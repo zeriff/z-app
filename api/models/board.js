@@ -51,7 +51,6 @@ module.exports.create = function(board_title) {
 
 // CREATE MANY BOARDS
 module.exports.createManyBoards = function(boards) {
-    console.log("creating boards")
     if (boards.length > 0) {
         let board_promises = [];
         boards.forEach(function(b) {

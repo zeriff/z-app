@@ -245,11 +245,9 @@ function getAll(req, res) {
 
 // POST /pins
 function createPin(req, res) {
-    console.log("Craeteing pin")
     let current_user = auth.current_user;
     let pinParams = build_pin_params(req);
     Pin.createPin(current_user, pinParams).then(function(pin) {
-        console.log("creatd successfully")
         res.json({success: true, message: "Successfully created!", pin: pin});
     })
 }

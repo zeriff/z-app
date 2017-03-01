@@ -24,7 +24,7 @@ class Signup extends React.Component {
                 if (res.data.success) {
                     storageMgr.addUserDetails(res.data.userDetails);
                     browserHistory.push("/");
-                    toastr.message(re.data.message);
+                    toastr.info(res.data.message);
                 } else {
                     toastr.error(res.data.message);
                 }

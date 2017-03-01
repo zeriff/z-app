@@ -214,7 +214,7 @@ function finalize_registration(req, res) {
         if (t_user) {
             if (req.body.password) {
                 User.createNewUserProfile(t_user, req.body.password).then(function(user) {
-                    autheticateUser_after_signup(user.new_user.username, user.new_user.password, user.new_profile).then(function(response) {
+                    autheticateUser_after_signup(user.new_user._id, user.new_user.password, user.new_profile).then(function(response) {
                         t_user.remove();
                         res.json(response);
                     });
@@ -243,7 +243,7 @@ function register(req, res) {
         } else {
             let tempuser = new TempUser({
                 email: profile.email,
-                username: "@" + profile.givenName.toLowerCase(),
+                username: "@" + profile.email.split("@")[0].toLowerCase(),
                 name: profile.name,
                 access_token: tokens.access_token,
                 avatar: profile.imageUrl,
@@ -279,17 +279,15 @@ function deleteUser(req, res) {
     });
 }
 
-function autheticateUser_after_signup(username, password, profile) {
+function autheticateUser_after_signup(user_id, password, profile) {
     return new Promise(function(resolve, reject) {
         let query = {
-            username: username
+            _id: user_id
         }
         let find_user = User.findOne(query);
         find_user.then(function(user) {
-
             if (!user) {
                 return resolve({success: false, message: "Authentication failed, user not found"});
-
             }
             if (user.password != password) {
                 return resolve({success: false, message: "Authentication failed, Wrong password"});
