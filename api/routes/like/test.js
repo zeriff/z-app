@@ -24,7 +24,7 @@ describe("Like Api", function() {
     });
 
     it("GET /api/likes/:pin_id => Should like Pin", function(done) {
-        supertest(app).get("/api/like/" + pin._id).set('x-access-token', auth_helper.getToken()).end(function(err, res) {
+        supertest(app).get("/api/likes/" + pin._id).set('x-access-token', auth_helper.getToken()).end(function(err, res) {
             res.body.success.should.equal(true);
             Like.findOne({likeable_id: pin._id}).then(function(like) {
                 like.likeable_id.toString().should.equal(pin._id.toString());
@@ -34,15 +34,15 @@ describe("Like Api", function() {
     });
 
     it("GET /api/likes/:pin_id/count => Should get likes for Pin", function(done) {
-        supertest(app).get("/api/like/" + pin._id + "/likes").end(function(err, res) {
+        supertest(app).get("/api/likes/" + pin._id + "/count").end(function(err, res) {
             res.status.should.equal(200);
-            res.body.should.have.property('likes');
+            res.body.constructor.name.should.equal("Object");
             done();
         });
     });
 
     it("GET /api/likes/:pin_id/status => Should get like status with no user session", function(done) {
-        supertest(app).get("/api/like/status/" + pin._id).end(function(err, res) {
+        supertest(app).get("/api/likes/" + pin._id + "/status").end(function(err, res) {
             res.status.should.equal(200);
             res.body.should.have.property("liked");
             res.body.should.have.property("count");
@@ -53,7 +53,7 @@ describe("Like Api", function() {
     });
 
     it("GET /api/likes/:pin_id/status => Should get like status with user session", function(done) {
-        supertest(app).get("/api/like/status/" + pin._id).set('x-access-token', auth_helper.getToken()).end(function(err, res) {
+        supertest(app).get("/api/likes/" + pin._id + "/status").set('x-access-token', auth_helper.getToken()).end(function(err, res) {
             res.status.should.equal(200);
             res.body.should.have.property("liked");
             res.body.should.have.property("count");
@@ -64,7 +64,7 @@ describe("Like Api", function() {
     });
 
     it("DELETE  /api/likes/:pin_id => Should unlike Pin", function(done) {
-        supertest(app).delete("/api/like/" + pin._id).set('x-access-token', auth_helper.getToken()).end(function(err, res) {
+        supertest(app).delete("/api/likes/" + pin._id).set('x-access-token', auth_helper.getToken()).end(function(err, res) {
             res.status.should.equal(200);
             res.body.success.should.equal(true);
             done();

@@ -64,7 +64,10 @@ var bind_api = function(router) {
 *                 $ref: "#/definitions/UserBoard"
 */
 
-    router.route("/userboards").get(auth.authorize_user, getUserboards).post(auth.authorize_user, createUserBoard);
+    router
+        .route("/userboards")
+        .get(auth.authorize_user, getUserboards)
+        .post(auth.authorize_user, createUserBoard);
 
     /**
 * @swagger
@@ -94,7 +97,9 @@ var bind_api = function(router) {
 *               type: boolean
 */
 
-    router.route("/userboards/:title").delete(auth.authorize_user, deleteDreamBoard);
+    router
+        .route("/userboards/:title")
+        .delete(auth.authorize_user, deleteDreamBoard);
     /**
     * @swagger
     * /api/userboards/{id}:
@@ -123,7 +128,9 @@ var bind_api = function(router) {
     *               type: boolean
     */
 
-    router.route("/userboards/:id").delete(auth.authorize_user, deleteDreamBoard);
+    router
+        .route("/userboards/:id")
+        .delete(auth.authorize_user, deleteDreamBoard);
 }
 
 function getUserboards(req, res) {
@@ -134,41 +141,49 @@ function getUserboards(req, res) {
     }
 
     UserBoard.find(query, {}, {
-        sort: {
-            'updatedAt': -1
-        }
-    }).then(function(boards) {
-        res.json({
-            userboards: boards
-                ? boards
-                : []
+            sort: {
+                'updatedAt': -1
+            }
         })
-    });
+        .then(function(boards) {
+            res.json({
+                userboards: boards
+                    ? boards
+                    : []
+            })
+        });
 }
 function createUserBoard(req, res) {
     let current_user = auth.current_user;
 
-    if (req.body.boards.constructor === Array) {
+    if (req.body.board.constructor === Array) {
         let params = {
             boards: req.body.board,
             image_url: req.body.image_url,
             story: req.body.story
         }
 
-        UserBoard.createManyDreamBoards(current_user, params).then(function(a) {
-            res.json({success: true, userboards: a});
-        });
+        UserBoard
+            .createManyDreamBoards(current_user, params)
+            .then(function(a) {
+                res.json({success: true, userboards: a});
+            });
 
     } else if (req.body.boards.constructor === String) {
         let board_params = {
-            title: req.body.board.trim(),
+            title: req
+                .body
+                .board
+                .trim(),
             image_url: req.body.image_url,
             story: req.body.story
         };
 
-        UserBoard.createDreamBoard(current_user, board_params).then(function(b) {
-            res.json({success: true, userboards: [b], message: "Successfully created"})
-        });
+        UserBoard
+            .createDreamBoard(current_user, board_params)
+            .then(function(b) {
+                res.json({success: true, userboards: [b], message: "Successfully created"})
+            });
     } else {
         res.json({success: false, message: "board format not supported"})
     }
@@ -193,11 +208,15 @@ function deleteDreamBoard(req, res) {
             _id: board_id
         }
     }
-    UserBoard.findOne(query).then(function(board) {
-        board.remove().then(function(b) {
-            res.json({success: true, userboard: b});
-        })
-    });
+    UserBoard
+        .findOne(query)
+        .then(function(board) {
+            board
+                .remove()
+                .then(function(b) {
+                    res.json({success: true, userboard: b});
+                })
+        });
 }
 
 module.exports = {

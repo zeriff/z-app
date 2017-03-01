@@ -39,7 +39,7 @@ describe("Pin Api", function() {
             .field("title", "Test Title")
             .field('boards', 'Test board')
             .field('story', 'test story')
-            .attach('image_url', 'testfiles/test.jpg')
+            .attach('image', 'testfiles/test.jpg')
             .end(function(err, res) {
                 res
                     .body
@@ -137,7 +137,7 @@ describe("Pin Api", function() {
             .set("x-access-token", auth_helper.getToken())
             .field("title", "Empty board pin")
             .field('story', 'Empty board pin story')
-            .attach('image_url', 'testfiles/test.jpg')
+            .attach('image', 'testfiles/test.jpg')
             .end(function(err, res) {
                 res
                     .body

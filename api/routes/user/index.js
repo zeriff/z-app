@@ -5,6 +5,7 @@ var jwt = require('jsonwebtoken');
 var Profile = require('../../models/profile');
 var Follow = require('../../models/follow');
 var UserBoard = require('../../models/userboard');
+var constants = require("../../constants");
 
 var bind_user_controller = function(router) {
     /**
@@ -168,22 +169,6 @@ var bind_user_controller = function(router) {
   *           $ref: "#/definitions/Profile"
   */
     router.route("/users/:id/profile").get(getUserinfo);
-
-    router.route("/users/:id/userstates").get(getUserStates);
-
-}
-
-function getUserStates(req, res) {
-    let user_id = req.body.id;
-    let followers_query = {
-        followable_id: user_id
-    }
-    let getFollowers = Follow.find(followers_query);
-    let followings_query = {
-        follower_id: user_id
-    }
-    let getFollowings = Follow.find(followings_query);
-    return Promise.all([getFollowers, getFollowings]);
 }
 
 function getUserinfo(req, res) {
@@ -209,11 +194,20 @@ function getUserinfo(req, res) {
     });
 
     Promise.all([get_profile, get_followers, get_following, get_memory_boards]).then(function(userinfo) {
+        console.log(userinfo);
         res.json({
-            avatar: userinfo[0].avatar,
-            avatar: userinfo[0].intrests,
-            avatar: userinfo[0].gender,
-            avatar: userinfo[0].name,
+            avatar: userinfo[0]
+                ? userinfo[0].avatar
+                : constants.default_image,
+            intrests: userinfo[0]
+                ? userinfo[0].intrests
+                : [],
+            gender: userinfo[0]
+                ? userinfo[0].gender
+                : "",
+            name: userinfo[0]
+                ? userinfo[0].name
+                : "",
             followers: userinfo[1].length,
             following: userinfo[2].length,
             memories: userinfo[3].length
