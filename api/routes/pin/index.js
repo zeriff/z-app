@@ -219,11 +219,11 @@ function getAll(req, res) {
     let current_user = auth.current_user;
     let board_title = req.query.d_board;
     let query = {
-        user_id: current_user._id
+        //    user_id: current_user._id
     }
     if (board_title) {
         query = {
-            user_id: current_user._id,
+            //      user_id: current_user._id,
             "boards": {
                 '$regex': board_title,
                 '$options': 'i'
