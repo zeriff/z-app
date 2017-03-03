@@ -99,7 +99,8 @@ module.exports = {
                 }
             });
         });
-    }
+    },
+    removeInvites: function(req, res, next) {}
 }
 
 // HELPER_METHODS
