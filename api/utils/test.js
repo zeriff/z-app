@@ -38,7 +38,7 @@ describe("IMAGE UPLOADER =>", function() {
 
     it("should upload file", function(done) {
         image_uploader.upload(current_user, file, "test", "testfilename", function(data) {
-            data.Location.should.equal("https://zeriffuploads.s3.amazonaws.com/testUserid/test/testfilename");
+            data.Location.should.equal("https://zeriffuploads.s3.ap-south-1.amazonaws.com/testUserid/test/testfilename");
             done();
         });
     })

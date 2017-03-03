@@ -16,7 +16,7 @@ export function load_discover_boards() {
             }
         }).then(function(res) {
             store.dispatch(loadBoards(res.data));
-        });
+        }, Genfailure);
     }
 }
 
@@ -34,7 +34,7 @@ export function load_user_pins() {
             }
         }).then(function(res) {
             store.dispatch(loadPins(res.data.pins));
-        });
+        }, Genfailure);
     }
 }
 
@@ -46,7 +46,7 @@ export function load_user_boards() {
         }
     }).then(function(res) {
         store.dispatch(loadUserBoards(res.data.userboards));
-    });
+    }, Genfailure);
 }
 
 export function checkUserSession() {
@@ -72,6 +72,14 @@ export function getUsers() {
             }
         }).then(function(res) {
             store.dispatch(loadUsers(res.data.users));
-        });
+        }, Genfailure);
+    }
+}
+
+function Genfailure(res) {
+    console.log(arguments);
+    if (res.response.status == 403) {
+        browserHistory.push("/auth");
+        toastr.error("Session expired please login");
     }
 }

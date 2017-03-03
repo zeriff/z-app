@@ -30,6 +30,43 @@ describe("USER BOARD API => ", function() {
             });
     });
 
+    it("GET /api/userboards/:id should get user board with pin", function(done) {
+        supertest(app)
+            .get("/api/userboards/588f5392eff8dc56e18abf3f")
+            .set("x-access-token", auth_helper.getToken())
+            .end(function(err, res) {
+                res
+                    .body
+                    .should
+                    .have
+                    .property("userboard");
+                res
+                    .body
+                    .should
+                    .have
+                    .property("pins");
+                done();
+            });
+    });
+
+    it("POST /api/userboards/:id/settings should update visibility settings", function(done) {
+        supertest(app)
+            .post("/api/userboards/588f5392eff8dc56e18abf3f/settings")
+            .set("x-access-token", auth_helper.getToken())
+            .send({visibility: 1})
+            .end(function(err, res) {
+                res
+                    .status
+                    .should
+                    .equal(200);
+                res
+                    .body
+                    .success
+                    .should
+                    .equal(true);
+                done();
+            });
+    });
     it('POST /api/userboards should create unique board', function(done) {
         supertest(app)
             .post("/api/userboards")

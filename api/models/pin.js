@@ -22,14 +22,12 @@ var UserBoard = require('./userboard');
 *         type: string
 *       story:
 *         type: string
-*       type:
+*       pintype:
 *         type: string
-*       video_url:
+*       original_url:
 *         type: string
 *       image_url:
 *         type: string
-*       boards:
-*         type: [string]
 */
 
 // **************SCHEMA*******************
@@ -37,6 +35,12 @@ var pinSchema = new Schema({
     user_id: String,
     title: String,
     story: String,
+    pintype: {
+        type: String
+    },
+    original_url: {
+        type: String
+    },
     image_url: String,
     boards: {
         type: [String],
@@ -60,6 +64,14 @@ function findTag(tag, tags) {
 }
 // **************EXPORTS*********************
 module.exports = Pin;
+module.exports.fields = {
+    "user_id": 1,
+    "title": 1,
+    "story": 1,
+    "image_url": 1,
+    "original_url": 1,
+    "pintype": 1
+}
 
 // HELPERS
 

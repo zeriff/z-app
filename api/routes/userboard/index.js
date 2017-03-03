@@ -1,5 +1,6 @@
 var auth = require("../../middlewares/authorization");
 var UserBoard = require("../../models/userboard");
+var userboardController = require("../../controllers/Userboard")
 
 var bind_api = function(router) {
 
@@ -66,7 +67,7 @@ var bind_api = function(router) {
 
     router
         .route("/userboards")
-        .get(auth.authorize_user, getUserboards)
+        .get(auth.authorize_user, userboardController.getAll)
         .post(auth.authorize_user, createUserBoard);
 
     /**
@@ -96,63 +97,121 @@ var bind_api = function(router) {
 *             success:
 *               type: boolean
 */
-
     router
         .route("/userboards/:title")
         .delete(auth.authorize_user, deleteDreamBoard);
     /**
-    * @swagger
-    * /api/userboards/{id}:
-    *   delete:
-    *     tags:
-    *       - UserBoard
-    *     description: Delete userboard
-    *     produces:
-    *       - application/json
-    *     parameters:
-    *       - name: x-access-token
-    *         description: Api access token
-    *         required: true
-    *         in: header
-    *         type: string
-    *       - name: title
-    *         description:  id of the userboard
-    *         type: string
-    *         required: true
-    *     responses:
-    *       200:
-    *         description: successfully Deleted
-    *         schema:
-    *           properties:
-    *             success:
-    *               type: boolean
-    */
+* @swagger
+* /api/userboards/{id}:
+*   delete:
+*     tags:
+*       - UserBoard
+*     description: Delete userboard
+*     produces:
+*       - application/json
+*     parameters:
+*       - name: x-access-token
+*         description: Api access token
+*         required: true
+*         in: header
+*         type: string
+*       - name: title
+*         description:  id of the userboard
+*         type: string
+*         required: true
+*     responses:
+*       200:
+*         description: successfully Deleted
+*         schema:
+*           properties:
+*             success:
+*               type: boolean
+*/
 
     router
         .route("/userboards/:id")
-        .delete(auth.authorize_user, deleteDreamBoard);
+        .delete(auth.authorize_user, deleteDreamBoard)
+        .get(userboardController.getUserBoard)
+
+    /**
+* @swagger
+* /api/userboards/{id}/settings:
+*   post:
+*     tags:
+*       - UserBoard
+*     description: Edit your board visibility settings
+*     consumes:
+*       - application/x-www-form-urlencoded
+*     produces:
+*       - application/json
+*     parameters:
+*       - name: x-access-token
+*         description: Api access token
+*         required: true
+*         in: header
+*         type: string
+*       - name: id
+*         description: Id of UserBoard to be Edited
+*         required: true
+*         in: path
+*         type: string
+*       - name: visibility
+*         description: Visibility [0 - "PRIVATE", 1 - "PUBLIC"]
+*         in: formData
+*         type: integer
+*         required: true
+*         enum: [0, 1]
+*     responses:
+*       200:
+*         description: Successfully updated settings
+*         schema:
+*           $ref: "#/definitions/GenResponse"
+*/
+    router
+        .route("/userboards/:id/settings")
+        .post(auth.authorize_user, userboardController.editSettings);
+
+    /**
+* @swagger
+* /api/userboards/{id}/invite:
+*   post:
+*     tags:
+*       - UserBoard
+*     description: Invite/Share user board to other users
+*     consumes:
+*       - application/x-www-form-urlencoded
+*     produces:
+*       - application/json
+*     parameters:
+*       - name: x-access-token
+*         description: Api access token
+*         required: true
+*         in: header
+*         type: string
+*       - name: id
+*         description: Id of UserBoard to be Edited
+*         required: true
+*         in: path
+*         type: string
+*       - name: invites
+*         description: Array of usernames to be invited
+*         required: true
+*         in: formData
+*         type: array
+*         items: string
+*     responses:
+*       200:
+*         description: Successfully invited
+*         schema:
+*           $ref: "#/definitions/GenResponse"
+*/
+
+    router
+        .route("/userboards/:id/invite")
+        .post(auth.authorize_user, userboardController.addInvites)
+        .delete(auth.authorize_user, userboardController.removeInvites);
 }
 
-function getUserboards(req, res) {
-
-    let current_user = auth.current_user;
-    let query = {
-        user_id: current_user._id
-    }
-
-    UserBoard.find(query, {}, {
-            sort: {
-                'updatedAt': -1
-            }
-        })
-        .then(function(boards) {
-            res.json({
-                userboards: boards
-                    ? boards
-                    : []
-            })
-        });
-}
 function createUserBoard(req, res) {
     let current_user = auth.current_user;
 

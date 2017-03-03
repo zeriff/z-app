@@ -23,6 +23,14 @@ var Promise = require('promise');
 var Schema = mongoose.Schema;
 var userboardSchema = new Schema({
     user_id: String,
+    visibility: {
+        type: Number,
+        default: 1
+    },
+    invites: {
+        type: [String],
+        index: true
+    },
     title: {
         type: String,
         trim: true
@@ -40,6 +48,12 @@ var UserBoard = mongoose.model('UserBoard', userboardSchema);
 // ****************EXPORTS***********************
 module.exports = UserBoard;
 
+module.exports.fields = {
+    "user_id": 1,
+    "title": 1,
+    "image_url": 1,
+    "story": 1
+}
 module.exports.createDreamBoard = function(current_user, board_params) {
     let query = {
         user_id: current_user._id,

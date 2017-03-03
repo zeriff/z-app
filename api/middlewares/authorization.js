@@ -11,6 +11,7 @@ var auth = {
             jwt.verify(token, process.env.ZERIFF_APP_SECRET, function(err, decodedToken) {
                 if (err) {
                     auth.current_user = null;
+                    req.app_session = null;
                     next();
                 } else {
                     try {
@@ -21,21 +22,24 @@ var auth = {
                         User.findOne(userquery).then(function(user) {
                             if (decodedToken._doc.session_token && decodedToken._doc.session_token == user.session_token) {
                                 auth.current_user = user;
+                                req.app_session = user;
                                 next();
                             } else {
+                                req.app_session = null;
                                 auth.current_user = null;
                                 next();
                             }
                         });
                     } catch (e) {
                         auth.current_user = null;
-                        console.log(e);
+                        req.app_session = null;
                         next();
                     }
                 }
             });
         } else {
             auth.current_user = null;
+            req.app_session = null;
             next();
         }
     },
