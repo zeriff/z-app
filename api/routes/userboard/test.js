@@ -95,6 +95,43 @@ describe("USER BOARD API => ", function() {
             });
     });
 
+    it('POST /api/userboards/:id/invite should Add unique invites', function(done) {
+        supertest(app)
+            .post("/api/userboards/588f5392eff8dc56e18abf3f/invite")
+            .send({invites: ["58916d49f400649e292417fe"]})
+            .set('x-access-token', auth_helper.getToken())
+            .end(function(err, res) {
+                res
+                    .body
+                    .success
+                    .should
+                    .equal(true)
+                res
+                    .status
+                    .should
+                    .equal(200);
+                done();
+            });
+    });
+    it('DELETE /api/userboards/:id/invite should Add unique invites', function(done) {
+        supertest(app)
+            .delete("/api/userboards/588f5392eff8dc56e18abf3f/invite")
+            .send({invites: ["58916d49f400649e292417fe"]})
+            .set('x-access-token', auth_helper.getToken())
+            .end(function(err, res) {
+                res
+                    .body
+                    .success
+                    .should
+                    .equal(true)
+                res
+                    .status
+                    .should
+                    .equal(200);
+                done();
+            });
+    });
+
     it("DELETE /api/userboards/:title should delete userboard", function(done) {
         supertest(app)
             .delete("/api/userboards/Visit this is new")

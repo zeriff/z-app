@@ -48,20 +48,4 @@ export default class SliderBoard extends React.Component {
     //     )
     // }
 
-    // render() {
-    //     return (
-    //         <div className="board">
-    //             <div className="ui piled segment">
-    //                 <div className="ui top attached label">
-    //                     <div className="pintitle">
-    //                         {this.props.title}
-    //                     </div>
-    //                 </div>
-    //                 <Parallax bgImage={_.sample(this.props.boards).image_url} strength={150} style={{
-    //                     minHeight: '600px'
-    //                 }}></Parallax>
-    //             </div>
-    //         </div>
-    //     )
-    // }
 }

@@ -9,7 +9,16 @@ describe("DISCOVER API", function() {
             .get("/api/discover")
             .set('x-access-token', auth_helper.getToken())
             .end(function(err, res) {
-                console.log(res.body);
+                res
+                    .status
+                    .should
+                    .equal(200);
+                res
+                    .body
+                    .constructor
+                    .name
+                    .should
+                    .equal("Array");
                 done();
             });
 

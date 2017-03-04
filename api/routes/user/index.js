@@ -1,11 +1,5 @@
-var User = require('../../models/user')
 var auth = require('../../middlewares/authorization');
-var TempUser = require('../../models/tempuser')
-var jwt = require('jsonwebtoken');
-var Profile = require('../../models/profile');
-var Follow = require('../../models/follow');
-var UserBoard = require('../../models/userboard');
-var constants = require("../../constants");
+var UserController = require("../../controllers/User");
 
 var bind_user_controller = function(router) {
     /**
@@ -69,7 +63,10 @@ var bind_user_controller = function(router) {
 *               items:
 *                 $ref: "#/definitions/User"
 */
-    router.route("/users").get(auth.authorize_admin, getAllUsers).post(register);
+    router
+        .route("/users")
+        .get(auth.authorize_admin, UserController.getAll)
+        .post(UserController.register);
 
     /**
   * @swagger
@@ -97,7 +94,9 @@ var bind_user_controller = function(router) {
   *               type: string
   */
 
-    router.route("/users/:id").delete(auth.authorize_user, deleteUser);
+    router
+        .route("/users/:id")
+        .delete(auth.authorize_user, UserController.delete);
     /**
       * @swagger
       * /api/users/done:
@@ -145,7 +144,9 @@ var bind_user_controller = function(router) {
       *                      $ref: "#/definitions/Profile"
       */
 
-    router.route("/users/done").post(finalize_registration);
+    router
+        .route("/users/done")
+        .post(UserController.finalize_registration);
 
     /**
   * @swagger
@@ -168,167 +169,9 @@ var bind_user_controller = function(router) {
   *         schema:
   *           $ref: "#/definitions/Profile"
   */
-    router.route("/users/:id/profile").get(getUserinfo);
-}
-
-function getUserinfo(req, res) {
-    let user_id = req.params.id;
-    let query = {
-        _id: user_id
-    }
-    let profile_query = {
-        user_id: user_id
-    }
-
-    let get_profile = Profile.findOne(profile_query);
-
-    let get_followers = get_profile.then(function(p) {
-        return Follow.getFollowers(user_id);
-    });
-    let get_following = get_followers.then(function(followers) {
-        return Follow.getFollowing(user_id);
-    });
-
-    let get_memory_boards = get_following.then(function(following) {
-        return UserBoard.getMemoryBoards(user_id);
-    });
-
-    Promise.all([get_profile, get_followers, get_following, get_memory_boards]).then(function(userinfo) {
-        console.log(userinfo);
-        res.json({
-            avatar: userinfo[0]
-                ? userinfo[0].avatar
-                : constants.default_image,
-            intrests: userinfo[0]
-                ? userinfo[0].intrests
-                : [],
-            gender: userinfo[0]
-                ? userinfo[0].gender
-                : "",
-            name: userinfo[0]
-                ? userinfo[0].name
-                : "",
-            followers: userinfo[1].length,
-            following: userinfo[2].length,
-            memories: userinfo[3].length
-        });
-    });
-
-}
-
-function finalize_registration(req, res) {
-    let temp_user_query = {
-        _id: req.body.user_id
-    };
-    TempUser.findOne(temp_user_query).then(function(t_user) {
-        if (t_user) {
-            if (req.body.password) {
-                User.createNewUserProfile(t_user, req.body.password).then(function(user) {
-                    autheticateUser_after_signup(user.new_user._id, user.new_user.password, user.new_profile).then(function(response) {
-                        t_user.remove();
-                        res.json(response);
-                    });
-                });
-            } else {
-                res.json({success: false, message: "Please set your password!"})
-            }
-        } else {
-            res.json({success: false, message: "Something went wrong please try again!"})
-        }
-    });
-}
-
-function register(req, res) {
-
-    let g_res = req.body;
-    let tokens = g_res.tokenObj;
-    let profile = g_res.profileObj;
-
-    let user_exist_query = {
-        email: profile.email
-    }
-    User.findOne(user_exist_query).then(function(user) {
-        if (user) {
-            res.json({new: false, username: user.username, message: "Already Registered please signin!"})
-        } else {
-            let tempuser = new TempUser({
-                email: profile.email,
-                username: "@" + profile.email.split("@")[0].toLowerCase(),
-                name: profile.name,
-                access_token: tokens.access_token,
-                avatar: profile.imageUrl,
-                google_id: profile.googleId,
-                id_token: tokens.id_token
-            });
-
-            tempuser.save().then(function(t_user) {
-                res.json({new: true, exist: false, user_id: t_user._id});
-            });
-        }
-    });
-
-}
-
-function getAllUsers(req, res) {
-    User.find({}).then(function(users) {
-        res.json({
-            users: users
-                ? users
-                : []
-        })
-    });
-}
-
-function deleteUser(req, res) {
-    var id = req.params.id;
-    User.delete(id, function(err) {
-        if (err) {
-            throw err
-        }
-        res.json({success: true, message: "Successfully deleted"})
-    });
-}
-
-function autheticateUser_after_signup(user_id, password, profile) {
-    return new Promise(function(resolve, reject) {
-        let query = {
-            _id: user_id
-        }
-        let find_user = User.findOne(query);
-        find_user.then(function(user) {
-            if (!user) {
-                return resolve({success: false, message: "Authentication failed, user not found"});
-            }
-            if (user.password != password) {
-                return resolve({success: false, message: "Authentication failed, Wrong password"});
-
-            }
-            if (user.password === password) {
-                let update_query = {
-                    session_token: Math.random()
-                }
-                let find_query = {
-                    _id: user._id
-
-                }
-                let udpate_token = User.findOneAndUpdate(find_query, update_query, {new: true});
-
-                udpate_token.then(function(updated_user) {
-                    let token = jwt.sign(updated_user, process.env.ZERIFF_APP_SECRET);
-                    return resolve({
-                        success: true,
-                        message: "Authentication Successfull...",
-                        userDetails: {
-                            token: token,
-                            username: updated_user.username,
-                            avatar: profile.avatar
-                        }
-                    });
-                });
-            }
-        });
-
-    });
+    router
+        .route("/users/:id/profile")
+        .get(UserController.getUser);
 }
 
 module.exports = {

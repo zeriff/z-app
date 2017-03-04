@@ -93,14 +93,92 @@ module.exports = {
                     }
                 }
             }
-            UserBoard.findByIdAndUpdate(userboard._id, updateObj).then(function(status) {
+            userboard.update(updateObj).then(function(status) {
                 if (status.nModified == 1) {
                     return res.json({success: true, message: "Invited Successfully"});
                 }
             });
         });
     },
-    removeInvites: function(req, res, next) {}
+    removeInvites: function(req, res, next) {
+        let invites = req.body.invites;
+        let userboard_id = req.params.id;
+
+        let userBoardQuery = {
+            _id: userboard_id,
+            user_id: req.app_session._id
+        }
+
+        let find_userboard = UserBoard.findOne(userBoardQuery);
+        let check_board_and_update = find_userboard.then(function(userboard) {
+            if (!userboard) {
+                return res.json({success: false, message: "You are not authorized"});
+            }
+            let updateObj = {
+                $pullAll: {
+                    invites: invites
+                }
+            }
+            userboard.update(updateObj).then(function(status) {
+                if (status.nModified == 1) {
+                    return res.json({success: true, message: "Removed Successfully"});
+                }
+            });
+        });
+    },
+    create: function(req, res) {
+        let current_user = req.app_session;
+        if (req.body.board.constructor === Array) {
+            let params = {
+                boards: req.body.board,
+                image_url: req.body.image_url,
+                story: req.body.story
+            }
+
+            UserBoard.createManyDreamBoards(current_user, params).then(function(a) {
+                res.json({success: true, userboards: a});
+            });
+
+        } else if (req.body.boards.constructor === String) {
+            let board_params = {
+                title: req.body.board.trim(),
+                image_url: req.body.image_url,
+                story: req.body.story
+            };
+
+            UserBoard.createDreamBoard(current_user, board_params).then(function(b) {
+                res.json({success: true, userboards: [b], message: "Successfully created"})
+            });
+        } else {
+            res.json({success: false, message: "board format not supported"})
+        }
+    },
+    delete: function(req, res) {
+
+        let current_user = req.app_session;
+        let query = {};
+        let title = req.params.title;
+        if (title) {
+            query = {
+                user_id: current_user._id,
+                title: {
+                    '$regex': title.trim(),
+                    '$options': 'i'
+                }
+            }
+        } else {
+            let board_id = req.params.id;
+            query = {
+                user_id: current_user._id,
+                _id: board_id
+            }
+        }
+        UserBoard.findOne(query).then(function(board) {
+            board.remove().then(function(b) {
+                res.json({success: true, userboard: b});
+            })
+        });
+    }
 }
 
 // HELPER_METHODS

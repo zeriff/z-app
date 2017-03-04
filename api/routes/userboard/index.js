@@ -1,6 +1,6 @@
 var auth = require("../../middlewares/authorization");
 var UserBoard = require("../../models/userboard");
-var userboardController = require("../../controllers/Userboard")
+var UserboardController = require("../../controllers/Userboard")
 
 var bind_api = function(router) {
 
@@ -67,8 +67,8 @@ var bind_api = function(router) {
 
     router
         .route("/userboards")
-        .get(auth.authorize_user, userboardController.getAll)
-        .post(auth.authorize_user, createUserBoard);
+        .get(auth.authorize_user, UserboardController.getAll)
+        .post(auth.authorize_user, UserboardController.create);
 
     /**
 * @swagger
@@ -99,7 +99,7 @@ var bind_api = function(router) {
 */
     router
         .route("/userboards/:title")
-        .delete(auth.authorize_user, deleteDreamBoard);
+        .delete(auth.authorize_user, UserboardController.delete);
     /**
 * @swagger
 * /api/userboards/{id}:
@@ -130,8 +130,8 @@ var bind_api = function(router) {
 
     router
         .route("/userboards/:id")
-        .delete(auth.authorize_user, deleteDreamBoard)
-        .get(userboardController.getUserBoard)
+        .delete(auth.authorize_user, UserboardController.delete)
+        .get(auth.authorize_user, UserboardController.getUserBoard)
 
     /**
 * @swagger
@@ -169,7 +169,7 @@ var bind_api = function(router) {
 */
     router
         .route("/userboards/:id/settings")
-        .post(auth.authorize_user, userboardController.editSettings);
+        .post(auth.authorize_user, UserboardController.editSettings);
 
     /**
 * @swagger
@@ -194,7 +194,7 @@ var bind_api = function(router) {
 *         in: path
 *         type: string
 *       - name: invites
-*         description: Array of usernames to be invited
+*         description: Array of user ids to be invited
 *         required: true
 *         in: formData
 *         type: array
@@ -204,78 +204,42 @@ var bind_api = function(router) {
 *         description: Successfully invited
 *         schema:
 *           $ref: "#/definitions/GenResponse"
+*   delete:
+*     tags:
+*       - UserBoard
+*     description: Remove Invite/Share
+*     consumes:
+*       - application/x-www-form-urlencoded
+*     produces:
+*       - application/json
+*     parameters:
+*       - name: x-access-token
+*         description: Api access token
+*         required: true
+*         in: header
+*         type: string
+*       - name: id
+*         description: Id of UserBoard to be Edited
+*         required: true
+*         in: path
+*         type: string
+*       - name: invites
+*         description: Array of user ids to be removed
+*         required: true
+*         in: formData
+*         type: array
+*         items: string
+*     responses:
+*       200:
+*         description: Removed Successfully
+*         schema:
+*           $ref: "#/definitions/GenResponse"
 */
 
     router
         .route("/userboards/:id/invite")
-        .post(auth.authorize_user, userboardController.addInvites)
-        .delete(auth.authorize_user, userboardController.removeInvites);
-}
-
-function createUserBoard(req, res) {
-    let current_user = auth.current_user;
-
-    if (req.body.board.constructor === Array) {
-        let params = {
-            boards: req.body.board,
-            image_url: req.body.image_url,
-            story: req.body.story
-        }
-
-        UserBoard
-            .createManyDreamBoards(current_user, params)
-            .then(function(a) {
-                res.json({success: true, userboards: a});
-            });
-
-    } else if (req.body.boards.constructor === String) {
-        let board_params = {
-            title: req
-                .body
-                .board
-                .trim(),
-            image_url: req.body.image_url,
-            story: req.body.story
-        };
-
-        UserBoard
-            .createDreamBoard(current_user, board_params)
-            .then(function(b) {
-                res.json({success: true, userboards: [b], message: "Successfully created"})
-            });
-    } else {
-        res.json({success: false, message: "board format not supported"})
-    }
-
-}
-function deleteDreamBoard(req, res) {
-    let current_user = auth.current_user;
-    let query = {};
-    let title = req.params.title;
-    if (title) {
-        query = {
-            user_id: current_user._id,
-            title: {
-                '$regex': title.trim(),
-                '$options': 'i'
-            }
-        }
-    } else {
-        let board_id = req.params.id;
-        query = {
-            user_id: current_user._id,
-            _id: board_id
-        }
-    }
-    UserBoard
-        .findOne(query)
-        .then(function(board) {
-            board
-                .remove()
-                .then(function(b) {
-                    res.json({success: true, userboard: b});
-                })
-        });
+        .post(auth.authorize_user, UserboardController.addInvites)
+        .delete(auth.authorize_user, UserboardController.removeInvites);
 }
 
 module.exports = {

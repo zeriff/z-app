@@ -28,12 +28,16 @@ describe("USER API =>", function() {
         supertest(app)
             .get("/api/users/" + user_id + "/profile")
             .end(function(err, res) {
-                console.log(res.body);
                 res
                     .body
                     .should
                     .have
-                    .property("following")
+                    .property("userstates")
+                res
+                    .body
+                    .should
+                    .have
+                    .property("profile")
                 done();
             });
     });
