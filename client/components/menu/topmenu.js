@@ -7,6 +7,7 @@ export default class TopMenu extends React.Component {
     back() {
         browserHistory.goBack();
     }
+
     render() {
         let details = storageMgr.getUserDetails()
         return (
