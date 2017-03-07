@@ -1,7 +1,7 @@
 var auth = require("../../middlewares/authorization");
-var Follow = require("../../models/follow");
+var FollowController = require("../../controllers/Follow");
 
-var bind_pin_api = function(router) {
+module.exports = function(router) {
 
     /**
 * @swagger
@@ -59,7 +59,7 @@ var bind_pin_api = function(router) {
 *
 */
 
-    router.route("/follows/:user_id").get(auth.authorize_user, follow_user).delete(auth.authorize_user, unFollow_user);
+    router.route("/follows/:user_id").get(auth.authorize_user, FollowController.follow_user).delete(auth.authorize_user, FollowController.unFollow_user);
 
     /**
 * @swagger
@@ -80,10 +80,11 @@ var bind_pin_api = function(router) {
 *       200:
 *         description: Successfully fetched an Array of follow instance
 *         schema:
+*
 *           $ref: "#/definitions/Follow"
 */
 
-    router.route("/follows/:user_id/followers").get(getFollowers);
+    router.route("/follows/:user_id/followers").get(FollowController.getFollowers);
     /**
 * @swagger
 * /api/follows/{user_id}/following:
@@ -106,7 +107,7 @@ var bind_pin_api = function(router) {
 *           $ref: "#/definitions/Follow"
 */
 
-    router.route("/follows/:user_id/following").get(getFollowing);
+    router.route("/follows/:user_id/following").get(FollowController.getFollowing);
     /**
   * @swagger
   * /api/follows/{user_id}/status:
@@ -131,56 +132,5 @@ var bind_pin_api = function(router) {
   *               type: boolean
   *
 */
-    router.route("/follows/:user_id/status").get(getFollowingStatus)
-}
-
-// GET /api/follow/:user_id
-function follow_user(req, res) {
-    let current_user = auth.current_user;
-
-    let user_id = req.params.user_id;
-    Follow.createFollow(current_user._id, user_id).then(function(follow) {
-        res.json({success: true, follow: follow});
-    });
-}
-
-// DELETE /api/follows/:user_id
-function unFollow_user(req, res) {
-    let current_user = auth.current_user;
-    let user_id = req.params.user_id;
-    Follow.removeFollow(current_user._id, user_id).then(function() {
-        res.json({success: true});
-    });
-}
-
-// GET /api/follows/:user_id/followers
-function getFollowers(req, res) {
-    let user_id = req.params.user_id;
-    Follow.getFollowers(user_id).then(function(followers) {
-        res.json(followers);
-    });
-}
-
-// GET /api/follows/:user_id/following
-function getFollowing(req, res) {
-    let user_id = req.params.user_id;
-    Follow.getFollowing(user_id).then(function(following) {
-        res.json(following);
-    });
-}
-
-// GET /api/follows/:user_id/status
-function getFollowingStatus(req, res) {
-    let current_user = auth.current_user;
-    if (current_user) {
-        let user_id = req.params.user_id;
-        Follow.isFollowing(current_user._id, user_id).then(function(isFollowing) {
-            res.json({isFollowing: isFollowing})
-        });
-    } else {
-        res.json({isFollowing: false})
-    }
-}
-module.exports = {
-    bind: bind_pin_api
+    router.route("/follows/:user_id/status").get(FollowController.getFollowingStatus)
 }

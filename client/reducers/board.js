@@ -1,9 +1,9 @@
-import {LOAD_BOARDS} from './../actions/types';
+import {SHOW_BOARD} from './../actions/types';
 
-export default function(state = [], action) {
+export default function(state = {}, action) {
     switch (action.type) {
-        case LOAD_BOARDS:
-            return [...action.payload];
+        case SHOW_BOARD:
+            return action.payload;
         default:
             return state
     }

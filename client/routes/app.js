@@ -1,7 +1,9 @@
 import React from 'react';
 import App from '../containers/App';
-import Home from '../containers/home';
-import Discover from '../containers/discover';
+// import Home from '../containers/home';
+// import Discover from '../containers/discover';
+import Home from '../screens/home';
+import Discover from '../screens/discover';
 import Notification from '../containers/notification';
 import {Route, IndexRoute} from 'react-router';
 import Camera from '../containers/camera';

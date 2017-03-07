@@ -1,10 +1,10 @@
 import React from 'react';
-import Board from '../../components/entity/board';
-import Image from '../../components/entity/image';
+import Board from '../components/entity/board';
+import Image from '../components/entity/image';
 import {connect} from 'react-redux';
-import SliderBoard from '../../components/entity/sliderboard'
-import BoardCollection from '../../components/entity/board_collection';
-import {Grid, Segment, Divider} from 'semantic-ui-react'
+import SliderBoard from '../components/entity/sliderboard'
+import BoardCollection from '../components/entity/board_collection';
+import {Grid, Segment, Divider, Container} from 'semantic-ui-react'
 
 class Discover extends React.Component {
     componentDidUpdate() {
@@ -20,7 +20,7 @@ class Discover extends React.Component {
             console.log(no);
             if (board.pins.length > 0) {
                 return (
-                    <SliderBoard divno={no} key={Math.random()} boards={board.pins} title={board.title}></SliderBoard>
+                    <SliderBoard divno={no} key={Math.random()} board={board.board} boards={board.pins} title={board.title}></SliderBoard>
                 )
             }
             return "";
@@ -29,13 +29,13 @@ class Discover extends React.Component {
 
     render() {
         return (
-            <div className="home">
-                <div className="boards transitions-enabled" style={{
-                    margin: "auto"
-                }}>
-                    {this._renderBoards()}
-                </div>
+
+            <div className="boards" style={{
+                margin: "auto"
+            }}>
+                {this._renderBoards()}
             </div>
+
         )
     }
 }

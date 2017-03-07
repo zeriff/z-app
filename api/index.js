@@ -39,34 +39,34 @@ var swaggerSpec = swaggerJSDoc(options);
 api_router.use(auth.setCurrentUser);
 
 // AUTH ROUTES
-authApi.bind(api_router);
+authApi(api_router);
 
 // USERROUTES
-userApi.bind(api_router);
+userApi(api_router);
 
 // PINSROUTES
-pinApi.bind(api_router);
+pinApi(api_router);
 
 // BOARDROUTES
-boardApi.bind(api_router);
+boardApi(api_router);
 
 // ADMINROUTES
-adminApi.bind(api_router);
+adminApi(api_router);
 
 // LIKE ROUTES
-likeApi.bind(api_router);
+likeApi(api_router);
 
 // FOLLOW ROUTES
-followApi.bind(api_router);
+followApi(api_router);
 
 // USERBOARD ROUTES
-userboardApi.bind(api_router);
+userboardApi(api_router);
 
 // DISCOVER ROUTES
-discoverApi.bind(api_router);
+discoverApi(api_router);
 
 // TEST ROUTES
-testApi.bind(api_router);
+testApi(api_router);
 // DEFAULT API ROUTE
 api_router.get('/', function(req, res) {
     res.json({message: "You are in api"});

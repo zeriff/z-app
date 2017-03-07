@@ -29,12 +29,6 @@ var Follow = mongoose.model('Follow', followSchema);
 
 module.exports = Follow;
 
-module.exports.createFollow = function(by_user_id, user_id) {
-    return new Promise(function(resolve, reject) {
-        let follow = new Follow({follower_id: by_user_id, followable_id: user_id});
-        follow.save().then(resolve)
-    });
-}
 module.exports.removeFollow = function(by_user_id, user_id) {
     let query = {
         follower_id: by_user_id,

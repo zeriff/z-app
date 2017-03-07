@@ -7,45 +7,28 @@ import _ from 'lodash'
 
 export default class SliderBoard extends React.Component {
     _renderImages() {
-        return this.props.boards.map(function(board) {
+        return this.props.board.pins.map(function(board) {
             return (
                 <Image key={Math.random()} image={board}></Image>
             )
         });
     }
 
+    viewBoard() {
+        toastr.info("Getting board");
+    }
     render() {
+        console.log(this.props.board);
         return (
-            <div className="custom">
-                <Parallax bgImage={_.sample(this.props.boards).image_url} strength={70}>
-                    <div className="customdiv">
+            <a href={"/view/b?id=" + this.props.board._id} className="custom">
+                <Parallax bgImage={this.props.board.image_url} strength={70}>
+                    <div className={"customdiv" + this.props.divno}>
                         <div className="boardtitle">
                             {this.props.title}
                         </div>
-                        <div className="ui right floated yellow circular icon basic button">
-                            <i className="plus icon"></i>
-                        </div>
                     </div>
                 </Parallax>
-            </div>
+            </a>
         )
     }
-
-    // render() {
-    //     return (
-    //         <div className="board">
-    //             <div className="ui piled segment">
-    //                 <div className="ui top attached label">
-    //                     <div className="pintitle">
-    //                         {this.props.title}
-    //                     </div>
-    //                 </div>
-    //                 <OwlCarousel slideSpeed={500} singleItem autoPlay>
-    //                     {this._renderImages()}
-    //                 </OwlCarousel>
-    //             </div>
-    //         </div>
-    //     )
-    // }
-
 }

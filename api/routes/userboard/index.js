@@ -1,8 +1,7 @@
 var auth = require("../../middlewares/authorization");
-var UserBoard = require("../../models/userboard");
 var UserboardController = require("../../controllers/Userboard")
 
-var bind_api = function(router) {
+module.exports = function(router) {
 
     /**
 * @swagger
@@ -65,10 +64,7 @@ var bind_api = function(router) {
 *                 $ref: "#/definitions/UserBoard"
 */
 
-    router
-        .route("/userboards")
-        .get(auth.authorize_user, UserboardController.getAll)
-        .post(auth.authorize_user, UserboardController.create);
+    router.route("/userboards").get(auth.authorize_user, UserboardController.getAll).post(auth.authorize_user, UserboardController.create);
 
     /**
 * @swagger
@@ -97,9 +93,7 @@ var bind_api = function(router) {
 *             success:
 *               type: boolean
 */
-    router
-        .route("/userboards/:title")
-        .delete(auth.authorize_user, UserboardController.delete);
+    router.route("/userboards/:title").delete(auth.authorize_user, UserboardController.delete);
     /**
 * @swagger
 * /api/userboards/{id}:
@@ -128,10 +122,7 @@ var bind_api = function(router) {
 *               type: boolean
 */
 
-    router
-        .route("/userboards/:id")
-        .delete(auth.authorize_user, UserboardController.delete)
-        .get(auth.authorize_user, UserboardController.getUserBoard)
+    router.route("/userboards/:id").delete(auth.authorize_user, UserboardController.delete).get(auth.authorize_user, UserboardController.getUserBoard)
 
     /**
 * @swagger
@@ -167,9 +158,7 @@ var bind_api = function(router) {
 *         schema:
 *           $ref: "#/definitions/GenResponse"
 */
-    router
-        .route("/userboards/:id/settings")
-        .post(auth.authorize_user, UserboardController.editSettings);
+    router.route("/userboards/:id/settings").post(auth.authorize_user, UserboardController.editSettings);
 
     /**
 * @swagger
@@ -236,12 +225,5 @@ var bind_api = function(router) {
 *           $ref: "#/definitions/GenResponse"
 */
 
-    router
-        .route("/userboards/:id/invite")
-        .post(auth.authorize_user, UserboardController.addInvites)
-        .delete(auth.authorize_user, UserboardController.removeInvites);
-}
-
-module.exports = {
-    bind: bind_api
+    router.route("/userboards/:id/invite").post(auth.authorize_user, UserboardController.addInvites).delete(auth.authorize_user, UserboardController.removeInvites);
 }

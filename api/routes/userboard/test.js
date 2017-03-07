@@ -146,17 +146,6 @@ describe("USER BOARD API => ", function() {
                     .success
                     .should
                     .equal(true);
-                res
-                    .body
-                    .should
-                    .have
-                    .property("userboard");
-                res
-                    .body
-                    .userboard
-                    .title
-                    .should
-                    .equal("Visit this is new");
                 done();
             });
     });
@@ -175,17 +164,7 @@ describe("USER BOARD API => ", function() {
                     .success
                     .should
                     .equal(true);
-                res
-                    .body
-                    .should
-                    .have
-                    .property("userboard");
-                res
-                    .body
-                    .userboard
-                    .title
-                    .should
-                    .equal("One plus one");
+
                 done();
             });
     });

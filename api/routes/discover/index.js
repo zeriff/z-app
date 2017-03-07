@@ -1,8 +1,7 @@
 var auth = require("../../middlewares/authorization");
+var discoverController = require("../../controllers/Discover");
 
-var discoverController = require("../../controllers/discover");
-
-var bind_api = function(router) {
+module.exports = function(router) {
 
     /**
   * @swagger
@@ -48,8 +47,4 @@ var bind_api = function(router) {
   */
 
     router.route("/discover").get(auth.authorize_user, discoverController.discoverboards)
-}
-
-module.exports = {
-    bind: bind_api
 }

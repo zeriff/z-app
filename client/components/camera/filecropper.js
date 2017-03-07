@@ -62,9 +62,12 @@ class FileCropper extends React.Component {
             <Container textAlign="center">
                 <Grid stackable>
                     <Grid.Row columns={2}>
-                        <Grid.Column width={6}>
+                        <Grid.Column width={8}>
                             <div className="ui segment">
-                                <Cropper aspectRatio={3 / 3.5} preview=".img-preview" guides={true} src={this.state.src} ref={cropper => {
+                                <Cropper style={{
+                                    height: 450,
+                                    width: '100%'
+                                }} preview=".img-preview" guides={true} src={this.state.src} ref={cropper => {
                                     this.cropper = cropper;
                                 }}/>
                             </div>

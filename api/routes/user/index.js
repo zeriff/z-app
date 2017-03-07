@@ -1,7 +1,7 @@
 var auth = require('../../middlewares/authorization');
 var UserController = require("../../controllers/User");
 
-var bind_user_controller = function(router) {
+module.exports = function(router) {
     /**
 * @swagger
 * definition:
@@ -63,10 +63,7 @@ var bind_user_controller = function(router) {
 *               items:
 *                 $ref: "#/definitions/User"
 */
-    router
-        .route("/users")
-        .get(auth.authorize_admin, UserController.getAll)
-        .post(UserController.register);
+    router.route("/users").get(auth.authorize_admin, UserController.getAll).post(UserController.register);
 
     /**
   * @swagger
@@ -94,9 +91,7 @@ var bind_user_controller = function(router) {
   *               type: string
   */
 
-    router
-        .route("/users/:id")
-        .delete(auth.authorize_user, UserController.delete);
+    router.route("/users/:id").delete(auth.authorize_user, UserController.delete);
     /**
       * @swagger
       * /api/users/done:
@@ -144,9 +139,7 @@ var bind_user_controller = function(router) {
       *                      $ref: "#/definitions/Profile"
       */
 
-    router
-        .route("/users/done")
-        .post(UserController.finalize_registration);
+    router.route("/users/done").post(UserController.finalize_registration);
 
     /**
   * @swagger
@@ -169,11 +162,5 @@ var bind_user_controller = function(router) {
   *         schema:
   *           $ref: "#/definitions/Profile"
   */
-    router
-        .route("/users/:id/profile")
-        .get(UserController.getUser);
-}
-
-module.exports = {
-    bind: bind_user_controller
+    router.route("/users/:id/profile").get(UserController.getUser);
 }

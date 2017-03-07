@@ -1,4 +1,3 @@
-var auth = require("../middlewares/authorization");
 var UserBoard = require("../models/userboard");
 var Pin = require("../models/pin")
 
@@ -25,9 +24,10 @@ module.exports = {
             res.json({userboard: boards, pins: pins});
         });
     },
+
     // GET  /api/userboards
     getAll: function(req, res, next) {
-        let current_user = auth.current_user;
+        let current_user = req.app_session;
         let query = {
             user_id: current_user._id
         }
@@ -44,6 +44,7 @@ module.exports = {
             })
         });
     },
+
     // POST /api/userboards/:id/settings
     editSettings: function(req, res, next) {
         let visibility = req.body.visibility;
@@ -70,6 +71,7 @@ module.exports = {
             });
         });
     },
+
     // POST /api/userboards/:id/invite
     addInvites: function(req, res, next) {
         let invites = req.body.invites;
@@ -100,6 +102,8 @@ module.exports = {
             });
         });
     },
+
+    //DELETE  /api/userboards/:id/invite
     removeInvites: function(req, res, next) {
         let invites = req.body.invites;
         let userboard_id = req.params.id;
@@ -126,6 +130,8 @@ module.exports = {
             });
         });
     },
+
+    // POST /api/userboards
     create: function(req, res) {
         let current_user = req.app_session;
         if (req.body.board.constructor === Array) {
@@ -153,6 +159,8 @@ module.exports = {
             res.json({success: false, message: "board format not supported"})
         }
     },
+
+    // DELETE /api/userboards/:id
     delete: function(req, res) {
 
         let current_user = req.app_session;
@@ -173,10 +181,18 @@ module.exports = {
                 _id: board_id
             }
         }
-        UserBoard.findOne(query).then(function(board) {
-            board.remove().then(function(b) {
-                res.json({success: true, userboard: b});
-            })
+
+        let find_board = UserBoard.findOne(query);
+        let remove_board = find_board.then(function(board) {
+            return board.remove();
+        });
+
+        Promise.all([find_board, remove_board]).then(function([board, r_board]) {
+            if (board) {
+                res.json({success: true, message: "Deleted Successfully"});
+            } else {
+                res.json({success: false, message: "Something went wrong, Please refresh the page and try again"});
+            }
         });
     }
 }

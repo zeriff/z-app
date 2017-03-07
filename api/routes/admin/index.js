@@ -30,12 +30,8 @@ function getPins(req, res) {
     });
 }
 
-let bind_user_controller = function(router) {
+module.exports = function(router) {
     router.route("/admin/boards").get(auth.authorize_user, varifyAdmin, getBoards)
     router.route("/admin/users").get(auth.authorize_user, varifyAdmin, getUsers)
     router.route("/admin/pins").get(auth.authorize_user, varifyAdmin, getPins)
-}
-
-module.exports = {
-    bind: bind_user_controller
 }

@@ -9,14 +9,15 @@ module.exports = {
         //     user_id: current_user._id
         // }
 
-        let find_user_boards = UserBoard.find({
+        let query = {
             visibility: 1
-        }, UserBoard.fields, {
+        }
+        let query_options = {
             sort: {
                 'updatedAt': -1
             }
-        });
-
+        }
+        let find_user_boards = UserBoard.find(query, UserBoard.fields, query_options);
         find_user_boards.then(function(userboards) {
             let pins_promises = [];
             userboards.forEach(function(b) {
@@ -36,7 +37,7 @@ module.exports = {
             Promise.all(pins_promises).then(function(result) {
                 let json = [];
                 userboards.forEach(function(board, index) {
-                    json.push({title: board.title, pins: result[index]})
+                    json.push({board: board, title: board.title, pins: result[index]})
                 });
                 res.json(json);
             })

@@ -4,7 +4,7 @@ class Pin extends React.Component {
     render() {
         return (
             <div className="pin">
-                <div className="ui fluid raised link card">
+                <div className="ui fluid card">
                     <a className="image">
                         <img src={this.props.pin.image_url}></img>
                     </a>

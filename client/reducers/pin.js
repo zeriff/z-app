@@ -1,9 +1,9 @@
-import {LOAD_PINS} from './../actions/types';
+import {SHOW_PIN} from './../actions/types';
 
-export default function(state = [], action) {
+export default function(state = {}, action) {
     switch (action.type) {
-        case LOAD_PINS:
-            return [...action.payload];
+        case SHOW_PIN:
+            return action.payload;
         default:
             return state
     }

@@ -1,3 +1,10 @@
+.ui.pinview.menu{
+  /*background: transparent!important;*/
+}
+
+/*.ui.button{
+  font-family:  'lemonmilk'!important;
+}*/
 
 .ui.card {
     border-radius: 0px;
@@ -5,15 +12,21 @@
 .ui.card .image{
   border-radius: 0px !important;
 }
-/*.ui.top.sidebar{
+.topmenu{
+  visibility: visible;
+  /*margin-bottom: 60px;*/
+  padding-bottom: 60px;
+}
+.ui.top.sidebar{
   visibility: hidden;
-}*/
+}
 .f_menubar{
-  /*visibility: hidden;*/
+  visibility: hidden;
 }
 .custom{
   padding: 5px;
 }
+
 .userinfo{
   padding-top: 40px;
 }
@@ -21,12 +34,39 @@
 .m_image{
   width: 22px!important;
 }
-.customdiv{
+.customdiv1{
   background: rgba(0,0,0,0.3);
-  width: 410px;
-  height: 400px;
+  width: 550px;
+  height: 550px;
   padding: 5px;
   /*transition: opacity 0.3s;*/
+}
+
+.customdiv2{
+  background: rgba(0,0,0,0.3);
+  width: 550px;
+  height: 520px;
+  padding: 5px;
+  /*transition: opacity 0.3s;*/
+}
+
+.bg-text{
+  background: rgba(0,0,0,0.3)!important;
+  font-size: 40px;
+  font-family: 'lemonmilk'!important;
+  color: white;
+  height: 100%;
+  width: 100%;
+  padding-top: 30%;
+  text-align: center;
+}
+
+.pinview-bg{
+  height: 700px;
+  width: 100%;
+  background-position: 0% 28%;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .image-loaded { opacity: 1; }
@@ -86,7 +126,6 @@ h5.ui.header{
 
 .ui.basic.button{
   font-family:  'lemonmilk'!important;
-  font-size: 12px;
 }
 
 .board{
@@ -99,9 +138,17 @@ h5.ui.header{
   padding: 5px;
 }
 */
-.pin{
-  width: 420px;
+/*.pin{
+  width: 568px;
   padding: 5px;
+}*/
+.pin{
+  width: 47%;
+  min-width: 560px;
+  padding: 5px;
+}
+.ui.container.board_image{
+  margin-top: 50px;
 }
 
 .modals.dimmer .ui.scrolling.modal{
@@ -112,6 +159,19 @@ h5.ui.header{
 }
 
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+
+  .bg-text{
+    font-size: 20px;
+  }
+  .ui.container.board_image{
+        margin-top: 50px;
+        width: 100%!important;
+        margin-left: 0px!important;
+        margin-right: 0px!important;
+  }
+  .pinview-bg{
+    height: 350px;
+  }
   .ui.small.image{
     width: 90px!important;
   }
@@ -132,15 +192,31 @@ h5.ui.header{
 
   .pin {
     width: 100%;
+    min-width: 0px;
     padding: 5px;
   }
+
   .board {
     width: 100%;
     padding: 5px;
   }
-  .customdiv {
-    width: 350px;
-    padding: 5px;
+  .customdiv1{
+    background: rgba(0,0,0,0.3);
+    width: 100%;
+    height: 350px;
+    /*padding: 5px;*/
+    /*transition: opacity 0.3s;*/
+  }
+  .custom{
+    width: 100%;
+    padding: 2px;
+  }
+  .customdiv2{
+    background: rgba(0,0,0,0.3);
+    width: 100%;
+    height: 380px;
+    /*padding: 5px;*/
+    /*transition: opacity 0.3s;*/
   }
   .pintitle{
     font-size: 13px;
@@ -153,12 +229,9 @@ h5.ui.header{
     top: auto!important;
     bottom: 0!important
   }
-  .f_menubar{
-    visibility: visible;
-  }
-  .mfb-component, .mfb-component--tl, .mfb-component--tr, .mfb-component--bl, .mfb-component--br {
-    margin: 25px;
-    margin-bottom: 95px!important;
+  .topmenu{
+    visibility: hidden;;
+    padding-bottom: 0px;
   }
 }
 
