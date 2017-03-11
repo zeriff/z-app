@@ -1,40 +1,12 @@
-import {
-    ADD_TAG,
-    LOAD_PINS,
-    LOAD_BOARDS,
-    LOAD_USERS,
-    LOAD_USERBOARDS,
-    SHOW_PIN,
-    SHOW_BOARD
-} from './types';
+// Session
+export const SESSION_LOAD = 'SESSION_LOAD';
+export const SESSION_LOGIN = 'SESSION_LOGIN';
+export const SESSION_LOGOUT = 'SESSION_LOGOUT';
 
-import axios from 'axios';
-import storageMgr from '../utils/storagemanager';
-import store from '../store';
+export const PROFILE_LOAD = 'PROFILE_LOAD';
+export const EDIT_PROFILE = 'EDIT_PROFILE';
+export const LOAD_USERBOARDS_FOR_PROFILE = 'LOAD_USERBOARDS_FOR_PROFILE';
 
-export function showPin(pin) {
-    return {type: SHOW_PIN, payload: pin}
-}
-export function showBoard(board) {
-    return {type: SHOW_BOARD, payload: board}
-}
+export const LOAD_PINS = "LOAD_PINS";
 
-export function addTag(tag) {
-    return {type: ADD_TAG, payload: tag}
-}
-
-export function loadPins(pins) {
-    return {type: LOAD_PINS, payload: pins}
-};
-
-export function loadBoards(boards) {
-    return {type: LOAD_BOARDS, payload: boards}
-}
-
-export function loadUserBoards(userboards) {
-    return {type: LOAD_USERBOARDS, payload: userboards}
-}
-
-export function loadUsers(users) {
-    return {type: LOAD_USERS, payload: users}
-}
+export const LOAD_USERBOARDS_FOR_DISCOVER = 'LOAD_USERBOARDS_FOR_DISCOVER';

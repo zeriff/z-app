@@ -3,7 +3,6 @@ import {Grid} from 'semantic-ui-react'
 export default class UserStates extends React.Component {
     componentDidMount() {}
     render() {
-
         return (
             <div className="ui container">
                 <Grid centered columns={1}>

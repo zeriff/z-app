@@ -66,13 +66,14 @@ module.exports = User;
 module.exports.createUser = function(user_params) {
     let new_user = new User(user_params);
     return new Promise(function(resolve, reject) {
-        new_user.save(function(err, user) {
-            if (err) {
-                resolve(null)
-            } else {
-                resolve(user);
-            }
-        });
+        new_user
+            .save(function(err, user) {
+                if (err) {
+                    resolve(null)
+                } else {
+                    resolve(user);
+                }
+            });
     });
 }
 
@@ -88,12 +89,16 @@ module.exports.createNewUserProfile = function(userdata, newpassword) {
             google_id_token: userdata.id_token
         });
 
-        user.save().then(function(new_user) {
-            let profile = new Profile({user_id: new_user._id, avatar: userdata.avatar});
-            profile.save().then(function(new_profile) {
-                resolve({new_user: new_user, new_profile: new_profile});
+        user
+            .save()
+            .then(function(new_user) {
+                let profile = new Profile({user_id: new_user._id, avatar: userdata.avatar, name: userdata.username, username: new_user.username, email: new_user.email});
+                profile
+                    .save()
+                    .then(function(new_profile) {
+                        resolve({new_user: new_user, new_profile: new_profile});
+                    });
             });
-        });
 
     });
 

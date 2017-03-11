@@ -24,9 +24,14 @@
   visibility: hidden;
 }
 .custom{
-  padding: 5px;
+  padding: 8px;
 }
 
+.profile-container {
+  padding-bottom: 5px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
 .userinfo{
   padding-top: 40px;
 }
@@ -36,17 +41,17 @@
 }
 .customdiv1{
   background: rgba(0,0,0,0.3);
-  width: 550px;
-  height: 550px;
-  padding: 5px;
+  width: 547px;
+  height: 590px;
+  /*padding: 5px;*/
   /*transition: opacity 0.3s;*/
 }
 
 .customdiv2{
   background: rgba(0,0,0,0.3);
-  width: 550px;
+  width: 547px;
   height: 520px;
-  padding: 5px;
+  /*padding: 5px;*/
   /*transition: opacity 0.3s;*/
 }
 

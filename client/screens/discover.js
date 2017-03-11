@@ -1,46 +1,27 @@
 import React from 'react';
-import Board from '../components/entity/board';
-import Image from '../components/entity/image';
 import {connect} from 'react-redux';
-import SliderBoard from '../components/entity/sliderboard'
-import BoardCollection from '../components/entity/board_collection';
-import {Grid, Segment, Divider, Container} from 'semantic-ui-react'
+import * as actions from '../actions/discover';
+import BoardGrid from '../components/boardgrid';
+import {Container} from 'semantic-ui-react';
+import _ from 'lodash';
 
 class Discover extends React.Component {
-    componentDidUpdate() {
-        masonry.bind("boards", "custom");
-        masonry.reload("boards");
+    constructor(props) {
+        super(props)
+        this.props.loadDiscoverBoards();
     }
-
-    _renderBoards() {
-        return this.props.boards.map(function(board, index) {
-            let no = index / 2 == 0
-                ? 1
-                : 2;
-            console.log(no);
-            if (board.pins.length > 0) {
-                return (
-                    <SliderBoard divno={no} key={Math.random()} board={board.board} boards={board.pins} title={board.title}></SliderBoard>
-                )
-            }
-            return "";
-        });
-    }
+    componentDidMount() {}
 
     render() {
         return (
-
-            <div className="boards" style={{
-                margin: "auto"
-            }}>
-                {this._renderBoards()}
-            </div>
-
+            <Container>
+                <BoardGrid boards={_.map(this.props.boards, "board")}></BoardGrid>
+            </Container>
         )
     }
 }
 
 function mapStateToProps(state) {
-    return {boards: state.boards}
+    return {boards: state.discover.userboards}
 }
-export default connect(mapStateToProps)(Discover);
+export default connect(mapStateToProps, actions)(Discover);

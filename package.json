@@ -9,6 +9,7 @@
     "test": "mocha --timeout 15000 --recursive $(find './api' -name 'test.js')",
     "watch:build": "webpack --watch --config webpack.config.js",
     "watch:server": "nodemon",
+    "watch:b_server": "nodemon -w server.js --exec \"babel-node api --presets es2015,stage-1\"",
     "watch:debug": "node-debug server.js",
     "production": "webpack --config webpack.production.config.js && node server.js"
   },
@@ -26,6 +27,7 @@
     "aws-sdk": "^2.7.13",
     "axios": "^0.15.3",
     "babel": "^6.5.2",
+    "babel-cli": "^6.23.0",
     "babel-core": "^6.11.4",
     "babel-loader": "^6.2.4",
     "babel-preset-es2015": "^6.9.0",

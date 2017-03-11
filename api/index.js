@@ -10,6 +10,7 @@ var followApi = require("./routes/follow");
 var testApi = require("./routes/test");
 var userboardApi = require("./routes/userboard");
 var discoverApi = require('./routes/discover');
+var profileApi = require('./routes/profile');
 
 var auth = require('./middlewares/authorization');
 
@@ -64,6 +65,9 @@ userboardApi(api_router);
 
 // DISCOVER ROUTES
 discoverApi(api_router);
+
+// PROFILE API
+profileApi(api_router);
 
 // TEST ROUTES
 testApi(api_router);

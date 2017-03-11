@@ -51,6 +51,7 @@ module.exports = {
 
 function buildUserDetails(token, profile, updated_user) {
     return {
+        user_id: updated_user._id,
         token: token,
         username: updated_user.username,
         profile: profile

@@ -63,7 +63,10 @@ module.exports = function(router) {
 *               items:
 *                 $ref: "#/definitions/User"
 */
-    router.route("/users").get(auth.authorize_admin, UserController.getAll).post(UserController.register);
+    router
+        .route("/users")
+        .get(auth.authorize_admin, UserController.getAll)
+        .post(UserController.register);
 
     /**
   * @swagger
@@ -91,7 +94,9 @@ module.exports = function(router) {
   *               type: string
   */
 
-    router.route("/users/:id").delete(auth.authorize_user, UserController.delete);
+    router
+        .route("/users/:id")
+        .delete(auth.authorize_user, UserController.delete);
     /**
       * @swagger
       * /api/users/done:
@@ -139,7 +144,9 @@ module.exports = function(router) {
       *                      $ref: "#/definitions/Profile"
       */
 
-    router.route("/users/done").post(UserController.finalize_registration);
+    router
+        .route("/users/done")
+        .post(UserController.finalize_registration);
 
     /**
   * @swagger
@@ -162,5 +169,8 @@ module.exports = function(router) {
   *         schema:
   *           $ref: "#/definitions/Profile"
   */
-    router.route("/users/:id/profile").get(UserController.getUser);
+    router
+        .route("/users/:id/profile")
+        .get(UserController.getUser)
+        .put(UserController.editProfile);
 }

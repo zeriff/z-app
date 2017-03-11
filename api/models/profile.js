@@ -16,10 +16,10 @@ var Schema = mongoose.Schema;
 *       intrests:
 *         type: array
 *         items: string
-*       firstname:
-*         type: string
-*       lastName:
-*         type: string
+*       bio:
+*          type: string
+*       name:
+*          type: string
 *       avatar:
 *         type: string
 *       gender:
@@ -27,18 +27,30 @@ var Schema = mongoose.Schema;
 */
 
 var profileSchema = new Schema({
+
     user_id: {
         type: String,
         index: true
     },
+    email: {
+        type: String
+    },
     intrests: {
         type: [String]
     },
-    firstname: {
+    profession: {
         type: String,
         trim: true
     },
-    lastName: {
+    bio: {
+        type: String,
+        trim: true
+    },
+    username: {
+        type: String,
+        trim: true
+    },
+    name: {
         type: String,
         trim: true
     },
@@ -59,3 +71,11 @@ var profileSchema = new Schema({
 var Profile = mongoose.model('Profile', profileSchema);
 // ****************EXPORTS******************
 module.exports = Profile;
+module.exports.fields = {
+    "user_id": 1,
+    "bio": 1,
+    "firstname": 1,
+    "lastName": 1,
+    "profession": 1,
+    "avatar": 1
+}
