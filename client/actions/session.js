@@ -10,23 +10,28 @@ const localStorage = window.localStorage;
 export function initialize() {
 
     return (dispatch) => {
-        let session = StorageManager.getItem("session");
-        const {username, token} = session;
-        if (username && token) {
-            dispatch({
-                type: SESSION_LOAD,
-                payload: {
-                    username,
-                    token
-                }
-            });
-            updateHeaders({'x-access-token': token});
-            let profile = StorageManager.getItem("profile");
-            dispatch({type: PROFILE_LOAD, payload: profile});
-        } else {
+        try {
+            let session = StorageManager.getItem("session");
+            const {username, token} = session;
+            if (username && token) {
+                dispatch({
+                    type: SESSION_LOAD,
+                    payload: {
+                        username,
+                        token
+                    }
+                });
+                updateHeaders({'x-access-token': token});
+                let profile = StorageManager.getItem("profile");
+                dispatch({type: PROFILE_LOAD, payload: profile});
+            } else {
+                history.push('/auth');
+            }
+        } catch (e) {
             history.push('/auth');
         }
-    };
+
+    }
 }
 
 export function login(email, password, targetPath) {
