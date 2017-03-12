@@ -1,5 +1,4 @@
 import React from 'react';
-import {browserHistory} from 'react-router';
 import GoogleLogin from 'react-google-login';
 import {
     Container,
@@ -9,6 +8,9 @@ import {
     Segment,
     Grid
 } from 'semantic-ui-react';
+
+import {connect} from 'react-redux';
+import * as actions from '../actions/session';
 
 const g_id = "36528941489-n0uf3vr0uhrtev3p2c16revfm1cflj72.apps.googleusercontent.com";
 
@@ -27,6 +29,10 @@ class SignIn extends React.Component {
         this.setState({password: e.target.value})
     }
     responseGoogle(res) {}
+    onFormSubmit(e, data) {
+        e.preventDefault();
+        this.props.login(data.email, data.password, "/");
+    }
     render() {
         return (
             <Container>
@@ -35,10 +41,10 @@ class SignIn extends React.Component {
                         maxWidth: '450px',
                         paddingTop: '20%'
                     }}>
-                        <Form onSubmit={this.onFormSubmit}>
+                        <Form onSubmit={this.onFormSubmit.bind(this)}>
                             <Segment stacked>
                                 <Form.Field>
-                                    <input type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.onEmailChange.bind(this)}/>
+                                    <input type="text" name="email" placeholder="Email"/>
                                 </Form.Field>
                                 <Form.Field>
                                     <input type="password" name="password" placeholder="Password"/>
@@ -62,4 +68,4 @@ class SignIn extends React.Component {
     }
 }
 
-export default SignIn;
+export default connect(null, actions)(SignIn);

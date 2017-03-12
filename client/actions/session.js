@@ -49,6 +49,7 @@ export function login(email, password, targetPath) {
                     ...userDetails.username
                 });
                 StorageManager.setItem("profile", profile);
+                history.push("/");
             } else {
                 toastr.error(payload.message);
                 history.push("/auth");
