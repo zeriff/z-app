@@ -45,8 +45,8 @@ export function login(email, password, targetPath) {
                 let userDetails = payload.userDetails;
                 let profile = userDetails.profile;
                 StorageManager.setItem("session", {
-                    ...userDetails.token,
-                    ...userDetails.username
+                    token: userDetails.token,
+                    username: userDetails.username
                 });
                 StorageManager.setItem("profile", profile);
                 history.push("/");
