@@ -31,7 +31,7 @@ class SignIn extends React.Component {
     responseGoogle(res) {}
     onFormSubmit(e, data) {
         e.preventDefault();
-        this.props.login(data.email, data.password, "/");
+        this.props.login(data.formData.email, data.formData.password, "/");
     }
     render() {
         return (
@@ -43,15 +43,8 @@ class SignIn extends React.Component {
                     }}>
                         <Form onSubmit={this.onFormSubmit.bind(this)}>
                             <Segment stacked>
-                                <Form.Field>
-                                    <input type="text" name="email" placeholder="Email"/>
-                                </Form.Field>
-                                <Form.Field>
-                                    <input type="password" name="password" placeholder="Password"/>
-                                </Form.Field>
-                                <Form.Field>
-                                    <Checkbox name="term" label='I agree to the Terms and Conditions'/>
-                                </Form.Field>
+                                <Form.Input name="email" type="text" placeholder="Email"></Form.Input>
+                                <Form.Input name="password" type="password" placeholder="Password"></Form.Input>
                                 <Button type='submit' color='teal' fluid={true}>Login</Button>
                             </Segment>
                         </Form>

@@ -5,9 +5,9 @@ export function postSession(email, password) {
     const options = {
         headers: headers(),
         method: 'POST',
-        body: JSON.stringify({email, password})
+        data: JSON.stringify({email, password})
     };
-
+    console.log(options);
     return axios('/api/auth', options).then(parseJSON);
 }
 
