@@ -8,7 +8,7 @@ import Home from './screens/home';
 import Profile from './screens/profile';
 import SignIn from './screens/Signin';
 import SignUp from './screens/Signup';
-import EditProfile from './screens/editprofile';
+import EditProfile from './screens/EditProfile';
 import Discover from './screens/discover';
 
 const authRoutes = {

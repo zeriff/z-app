@@ -1,5 +1,5 @@
 var auth = require("../../middlewares/authorization");
-var discoverController = require("../../controllers/Discover");
+var discoverController = require("../../controllers/discover");
 
 module.exports = function(router) {
 
