@@ -18,7 +18,7 @@ describe("DISCOVER API", function() {
                     .constructor
                     .name
                     .should
-                    .equal("Array");
+                    .equal("Object");
                 done();
             });
 

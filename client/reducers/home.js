@@ -1,8 +1,9 @@
-import {LOAD_PINS} from '../actions';
+import {LOAD_PINS, SHOW_PIN} from '../actions';
 import {createReducer} from './utils';
 
 const initialState = {
-    pins: []
+    pins: [],
+    pin: {}
 };
 
 const handlers = {
@@ -10,6 +11,12 @@ const handlers = {
         return {
             ...state,
             pins: [...action.payload]
+        }
+    },
+    [SHOW_PIN]: function(state, action) {
+        return {
+            ...state,
+            pin: action.payload
         }
     }
 }

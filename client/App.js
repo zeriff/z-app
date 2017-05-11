@@ -4,10 +4,12 @@ import {Provider} from 'react-redux';
 import {initialize} from './actions/session';
 import store from './store';
 import routes from './routes';
+import "./style/style.css";
+
 
 store.dispatch(initialize(window.location.pathname));
 
-export default function() {
+export default function () {
     return (
         <Provider store={store}>
             <Router routes={routes} history={history}/>

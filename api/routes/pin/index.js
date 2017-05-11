@@ -4,7 +4,7 @@ var upload = multer({dest: "./uploads"});
 var Pin = require("../../models/pin");
 var PinController = require("../../controllers/Pin");
 
-module.exports = function(router) {
+module.exports = function (router) {
     /**
   * @swagger
   * definition:
@@ -89,8 +89,10 @@ module.exports = function(router) {
 *            $ref: '#/definitions/PinResponse'
 */
 
-    router.route("/pins").get(auth.authorize_user, PinController.getAll).post(auth.authorize_user, upload.single('image'), PinController.create);
-
+    router
+        .route("/pins")
+        .get(auth.authorize_user, PinController.getAll)
+        .post(auth.authorize_user, upload.single('image'), PinController.create);
     /**
 * @swagger
 * /api/pins/{id}:
@@ -180,22 +182,28 @@ module.exports = function(router) {
 *
 */
 
-    router.route("/pins/:id").delete(auth.authorize_user, authorize_resource, PinController.delete).put(auth.authorize_user, authorize_resource, PinController.edit).get(PinController.getPin);
+    router
+        .route("/pins/:id")
+        .delete(auth.authorize_user, authorize_resource, PinController.delete)
+        .put(auth.authorize_user, authorize_resource, PinController.edit)
+        .get(PinController.getPin);
 }
 
 // HELPERS
 function authorize_resource(req, res, next) {
     let current_user = req.app_session;
     let pin_id = req.params.id;
-    Pin.findOne({_id: pin_id}).then(function(pin) {
-        if (pin) {
-            if (pin.user_id.toString() == current_user._id.toString()) {
-                next();
+    Pin
+        .findOne({_id: pin_id})
+        .then(function (pin) {
+            if (pin) {
+                if (pin._creator.toString() == current_user._id.toString()) {
+                    next();
+                } else {
+                    res.json({success: false, message: "you are not authorized!"})
+                }
             } else {
-                res.json({success: false, message: "you are not authorized!"})
+                next();
             }
-        } else {
-            next();
-        }
-    });
+        });
 }

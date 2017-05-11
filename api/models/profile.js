@@ -13,6 +13,8 @@ var Schema = mongoose.Schema;
 *     properties:
 *       user_id:
 *         type: string
+*       _creator:
+*         type: string
 *       intrests:
 *         type: array
 *         items: string
@@ -31,6 +33,10 @@ var profileSchema = new Schema({
     user_id: {
         type: String,
         index: true
+    },
+    _creator: {
+        type: String,
+        ref: 'User'
     },
     email: {
         type: String
@@ -55,7 +61,8 @@ var profileSchema = new Schema({
         trim: true
     },
     avatar: {
-        type: String
+        type: String,
+        ref: 'Image'
     },
     phone: {
         type: String
@@ -73,6 +80,7 @@ var Profile = mongoose.model('Profile', profileSchema);
 module.exports = Profile;
 module.exports.fields = {
     "user_id": 1,
+    "_creator": 1,
     "bio": 1,
     "firstname": 1,
     "lastName": 1,

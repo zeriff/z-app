@@ -4,9 +4,6 @@ import Pin from '../../components/entity/pin';
 import * as actions from '../../actions';
 
 class Home extends React.Component {
-    // static contextTypes = {
-    //     router: React.PropTypes.func.isRequired
-    // };
 
     constructor(props) {
         super(props);
@@ -17,20 +14,27 @@ class Home extends React.Component {
         masonry.reload("pins");
     }
 
+    _onPinClick(pin) {}
+
     _renderPins() {
         var me = this;
-        return this.props.pins.map(function(item) {
-            return (
-                <Pin key={Math.random()} pin={item}></Pin>
-            )
-        });
+        return this
+            .props
+            .pins
+            .map(function (item) {
+                return (
+                    <Pin key={Math.random()} pin={item}></Pin>
+                )
+            });
     }
 
     render() {
 
         return (
             <div className="home">
-                <div className="pins transitions-enabled" style={{
+                <div
+                    className="pins transitions-enabled"
+                    style={{
                     margin: "auto"
                 }}>
                     {this._renderPins()}

@@ -1,8 +1,8 @@
 var Follow = require("../models/follow");
 var auth = require("../middlewares/authorization");
 module.exports = {
-    // GET /api/follow/:user_id
-    follow_user: function(req, res) {
+    // GET /api/follows/:user_id
+  follow_user: function(req, res) {
         let current_user = req.app_session;
         let user_id = req.params.user_id;
 
@@ -12,14 +12,12 @@ module.exports = {
         }
 
         let newFollow = new Follow(follow_params);
-        newFollow
-            .save()
-            .then(function(follow) {
-                if (follow) {
-                    return res.json({success: true, follow: follow});
-                }
-                return res.json({success: false});
-            });
+        newFollow.save().then(function(follow) {
+            if (follow) {
+                return res.json({success: true, follow: follow});
+            }
+            return res.json({success: false});
+        });
     },
     // DELETE /api/follows/:user_id
     unFollow_user: function(req, res) {
@@ -29,14 +27,12 @@ module.exports = {
             follower_id: current_user._id,
             followable_id: user_id
         };
-        Follow
-            .remove(query)
-            .then(function(follow) {
-                if (follow.result.n == 1) {
-                    return res.json({success: true, follow: follow});
-                }
-                return res.json({success: false});
-            });
+        Follow.remove(query).then(function(follow) {
+            if (follow.result.n == 1) {
+                return res.json({success: true, follow: follow});
+            }
+            return res.json({success: false});
+        });
     },
     // GET /api/follows/:user_id/followers
     getFollowers: function(req, res) {
@@ -44,11 +40,9 @@ module.exports = {
         let query = {
             followable_id: user_id
         }
-        Follow
-            .find(query)
-            .then(function(followers) {
-                res.json(followers)
-            });
+        Follow.find(query).then(function(followers) {
+            res.json(followers)
+        });
     },
     // GET /api/follows/:user_id/following
     getFollowing: function(req, res) {
@@ -56,11 +50,9 @@ module.exports = {
         let query = {
             follower_id: user_id
         }
-        Follow
-            .find(query)
-            .then(function(following) {
-                res.json(following);
-            });
+        Follow.find(query).then(function(following) {
+            res.json(following);
+        });
     },
     // GET /api/follows/:user_id/status
     getFollowingStatus: function(req, res) {

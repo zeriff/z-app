@@ -3,7 +3,7 @@ var Pin = require("../models/pin");
 module.exports = {
 
     // GET /api/pins
-    getAll: function(req, res) {
+    getAll: function (req, res) {
         let current_user = req.app_session;
         let board_title = req.query.d_board;
         let query = {
@@ -23,37 +23,41 @@ module.exports = {
                 '_id': -1
             }
         };
+
         Pin
             .find(query, Pin.fields, options)
-            .then(function(pins) {
+            .populate("_creator", "username -_id")
+            .populate('image')
+            .then(function (pins) {
                 res.json({
                     pins: pins
                         ? pins
                         : []
                 })
             });
+
     },
 
     // POST /api/pins
-    create: function(req, res) {
+    create: function (req, res) {
         let current_user = req.app_session;
         let pinParams = build_pin_params(req);
         Pin
-            .createPin(current_user, pinParams)
-            .then(function(pin) {
+            .create(current_user, pinParams)
+            .then(function (pin) {
                 res.json({success: true, message: "Successfully created!", pin: pin});
             })
     },
 
     // GET /api/pins/:id
-    getPin: function(req, res) {
+    getPin: function (req, res) {
         let pin_id = req.params.id;
         let query = {
             _id: pin_id
         }
         Pin
             .findOne(query)
-            .then(function(pin) {
+            .then(function (pin) {
                 if (pin) {
                     res.json({pin: pin, success: true});
                 } else {
@@ -63,11 +67,11 @@ module.exports = {
     },
 
     // DELETE  /api/pins/:id
-    delete: function(req, res) {
+    delete: function (req, res) {
         let current_user = req.app_session;
         Pin
             .delete(current_user, req.params.id)
-            .then(function(success) {
+            .then(function (success) {
                 let message = success
                     ? "Successfully deleted"
                     : "Pin not found!"
@@ -76,14 +80,14 @@ module.exports = {
     },
 
     // PUT /api/pins
-    edit: function(req, res) {
+    edit: function (req, res) {
         let current_user = req.app_session;
         let pin_id = req.params.id;
         let pinParams = build_pin_params(req);
         delete pinParams.file
         Pin
             .edit(current_user, pin_id, pinParams)
-            .then(function(update) {
+            .then(function (update) {
                 res.json({pin: update.pin, success: true, message: "Updated successfully"})
             });
     }

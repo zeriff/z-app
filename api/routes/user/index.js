@@ -1,7 +1,7 @@
 var auth = require('../../middlewares/authorization');
 var UserController = require("../../controllers/User");
 
-module.exports = function(router) {
+module.exports = function (router) {
     /**
 * @swagger
 * definition:
@@ -173,4 +173,5 @@ module.exports = function(router) {
         .route("/users/:id/profile")
         .get(UserController.getUser)
         .put(UserController.editProfile);
+
 }

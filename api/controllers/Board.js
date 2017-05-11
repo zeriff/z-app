@@ -3,7 +3,6 @@ var Board = require("../models/board");
 
 var UserBoard = require("../models/userboard");
 var User = require("../models/user")
-var Pin = require("../models/pin")
 
 module.exports = {
 

@@ -4,12 +4,17 @@ import NotFound from './screens/notfound';
 import Main from './components/Main';
 import Auth from './components/Auth';
 
-import Home from './screens/home';
 import Profile from './screens/profile';
 import SignIn from './screens/Signin';
 import SignUp from './screens/Signup';
-import EditProfile from './screens/EditProfile';
 import Discover from './screens/discover';
+
+// newOne
+
+import MyFeeds from './screens/MyFeeds';
+import Invites from './screens/Invites';
+import Feeds from './screens/Feeds';
+import Popular from './screens/Popular';
 
 const authRoutes = {
     path: 'auth',
@@ -32,21 +37,42 @@ const appRoutes = {
     path: '/',
     component: Main,
     indexRoute: {
-        component: Home
+        component: Discover,
+        indexRoute: {
+            component: Feeds
+        }
     },
     childRoutes: [
         {
-            path: 'discover',
-            component: Discover
+            path: '/discover',
+            component: Discover,
+            indexRoute: {
+                component: Feeds
+            },
+            childRoutes: [
+                {
+                    path: '/feeds',
+                    component: Feeds
+                }, {
+                    path: '/popular',
+                    component: Popular
+                }
+            ]
         }, {
-            path: "home",
-            component: Home
-        }, {
-            path: "profile",
-            component: Profile
-        }, {
-            path: "editprofile",
-            component: EditProfile
+            path: 'profile(/:id)',
+            component: Profile,
+            indexRoute: {
+                component: MyFeeds
+            },
+            childRoutes: [
+                {
+                    path: '/myfeeds',
+                    component: MyFeeds
+                }, {
+                    path: '/invites',
+                    component: Invites
+                }
+            ]
         }
     ]
 }
@@ -56,6 +82,5 @@ const notfoundRoute = {
     component: NotFound
 }
 
-export default[appRoutes,
-    authRoutes,
-    notfoundRoute]
+export default
+[appRoutes, authRoutes, notfoundRoute];

@@ -10,7 +10,7 @@ var publicPath = express.static(__dirname + '/public');
 app.use(publicPath);
 
 // SERVE CLIENT
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
     res.sendFile('index.html', {
         root: __dirname + '/public'
     });
@@ -18,18 +18,30 @@ app.get('/', function(req, res) {
 
 // BODY-PARSER FOR API
 app.use(morgan('dev'))
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 // BINDING API ROUTES
 app.use('/api', api);
+
 // FOR REACT ROUTER
-app.get('/api/*', function(req, res) {
-    res.status(404).send("<center style='padding-top: 15%'><h1 style='font-size: 500%'>404</h1><h1>PAGE NOT FOUND</h1></center>");
+app.get('/admin/*', function (req, res) {
+    res
+        .status(404)
+        .send("<center style='padding-top: 15%'><h1 style='font-size: 500%'>404</h1><h1>PAGE NO" +
+                "T FOUND</h1></center>");
 });
 
 // FOR REACT ROUTER
-app.get('*', function(req, res) {
+app.get('/api/*', function (req, res) {
+    res
+        .status(404)
+        .send("<center style='padding-top: 15%'><h1 style='font-size: 500%'>404</h1><h1>PAGE NO" +
+                "T FOUND</h1></center>");
+});
+
+// FOR REACT ROUTER
+app.get('*', function (req, res) {
     res.sendFile('index.html', {
         root: __dirname + '/public'
     });

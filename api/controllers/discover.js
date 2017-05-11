@@ -1,13 +1,14 @@
 var UserBoard = require("../models/userboard");
-var Pin = require("../models/pin");
-var auth = require("../middlewares/authorization");
-module.exports = {
-    discoverboards: function(req, res, next) {
 
-        // let current_user = auth.current_user;
-        // let user_board_query = {
-        //     user_id: current_user._id
-        // }
+var auth = require("../middlewares/authorization");
+var Riff = require('../models/RiffModel');
+var Promise = require("promise");
+
+module.exports = {
+    discoverboards: function (req, res, next) {
+
+        // let current_user = auth.current_user; let user_board_query = {     user_id:
+        // current_user._id }
 
         let query = {
             visibility: 1
@@ -17,30 +18,69 @@ module.exports = {
                 'updatedAt': -1
             }
         }
-        let find_user_boards = UserBoard.find(query, UserBoard.fields, query_options);
-        find_user_boards.then(function(userboards) {
-            let pins_promises = [];
-            userboards.forEach(function(b) {
-                let query = {
-                    "boards": {
-                        '$regex': b.title,
-                        '$options': 'i'
-                    }
-                };
-                let find_pins_for_board = Pin.find(query, Pin.fields, {
-                    sort: {
-                        'createdAt': -1
-                    }
-                });
-                pins_promises.push(find_pins_for_board);
+
+        UserBoard
+            .find(query, UserBoard.fields, query_options)
+            .populate("_creator", "username -_id")
+            .then(function (userboards) {
+                res.json({boards: userboards});
             });
-            Promise.all(pins_promises).then(function(result) {
-                let json = [];
-                userboards.forEach(function(board, index) {
-                    json.push({board: board, title: board.title, pins: result[index]})
+    },
+
+    discoverPopular: function (req, res) {
+        let current_user = req.app_session;
+        let travel_riffs_query = {
+            "tags": {
+                '$regex': "travel",
+                '$options': 'i'
+            }
+        };
+
+        let travel_riffs = Riff
+            .find(travel_riffs_query)
+            .populate('image')
+            .populate('_creator username');
+
+        let dream_riffs_query = {
+            "tags": {
+                '$regex': "dream",
+                '$options': 'i'
+            }
+        };
+        let dream_riffs = Riff
+            .find(dream_riffs_query)
+            .populate('image')
+            .populate('_creator username');
+
+        let adventure_riffs_query = {
+            "tags": {
+                '$regex': "food",
+                '$options': 'i'
+            }
+        };
+        let adventure_riffs = Riff
+            .find(adventure_riffs_query)
+            .populate('image')
+            .populate('_creator username');
+
+        Promise
+            .all([travel_riffs, dream_riffs, adventure_riffs])
+            .then(function ([travels, dreams, adventures]) {
+                res.json({
+                    popular: [
+                        {
+                            title: "Riffsters Who accept every challenge",
+                            riffs: adventures
+                        }, {
+                            title: "For them our world is two small",
+                            riffs: travels
+                        }, {
+                            title: "Dream big",
+                            riffs: dreams
+                        }
+                    ]
                 });
-                res.json(json);
-            })
-        });
+            });
+
     }
 }

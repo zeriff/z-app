@@ -17,3 +17,12 @@ export function getProfile(user_id) {
     };
     return axios("/api/profile/" + user_id, options).then(parseJSON);
 }
+
+export function uploadProfilePic(data) {
+    const options = {
+        headers: headers(),
+        method: 'POST',
+        data: data
+    };
+    return axios("/api/profile/avatar", options).then(parseJSON);
+}

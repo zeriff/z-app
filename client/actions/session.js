@@ -12,13 +12,14 @@ export function initialize() {
     return (dispatch) => {
         try {
             let session = StorageManager.getItem("session");
-            const {username, token} = session;
-            if (username && token) {
+            const {username, token, user_id} = session;
+            if (username && token && user_id) {
                 dispatch({
                     type: SESSION_LOAD,
                     payload: {
                         username,
-                        token
+                        token,
+                        user_id
                     }
                 });
                 updateHeaders({'x-access-token': token});
@@ -40,16 +41,23 @@ export function login(email, password, targetPath) {
             if (payload.success) {
                 updateHeaders({'x-access-token': payload.userDetails.token});
                 dispatch({type: SESSION_LOGIN, payload});
-
                 StorageManager.addUserDetails(payload.userDetails);
                 let userDetails = payload.userDetails;
                 let profile = userDetails.profile;
                 StorageManager.setItem("session", {
                     token: userDetails.token,
-                    username: userDetails.username
+                    username: userDetails.username,
+                    user_id: userDetails.user_id
                 });
                 StorageManager.setItem("profile", profile);
                 history.push("/");
+                dispatch({
+                    type: PROFILE_LOAD,
+                    payload: {
+                        username: userDetails.username,
+                        ...profile
+                    }
+                })
             } else {
                 toastr.error(payload.message);
                 history.push("/auth");
@@ -61,8 +69,8 @@ export function login(email, password, targetPath) {
 export function logout(session) {
     return (dispatch) => {
         dispatch({type: SESSION_LOGOUT});
-        deleteSession(session);
-        updateHeaders({Auth: undefined});
+        //        deleteSession(session);
+        updateHeaders({"x-access-token": undefined});
         try {
             localStorage.removeItem('email');
             localStorage.removeItem('name');

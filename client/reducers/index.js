@@ -5,6 +5,7 @@ import userboards from './userboard';
 import users from './admin/users';
 import pin from './pin';
 import board from './board';
+import view from './view';
 
 const rootReducer = combineReducers({
     boards,
@@ -12,7 +13,8 @@ const rootReducer = combineReducers({
     users,
     userboards,
     board,
-    pin
+    pin,
+    view
 });
 
 export default rootReducer;

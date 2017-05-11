@@ -1,92 +1,140 @@
 import React from 'react';
-import {connect} from 'react-redux';
-import {Icon, Menu, Container, Button} from 'semantic-ui-react'
-import * as actions from '../actions';
-import axios from 'axios';
-import storageMgr from '../utils/storagemanager';
-import _ from 'lodash'
+import Modal from 'react-modal';
+import {
+    Button,
+    Icon,
+    Container,
+    Segment,
+    Divider,
+    Loader,
+    Dimmer
+} from 'semantic-ui-react';
+import {Parallax, Background} from 'react-parallax';
+import Masonry from 'react-masonry-component';
 import Pin from '../components/entity/pin';
-import {browserHistory} from 'react-router';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 class BoardView extends React.Component {
-    componentDidMount() {
-        let me = this;
-        var userdetails = storageMgr.getUserDetails()
-        if (userdetails == null) {
-            browserHistory.push("/auth");
-            return
-        } else {
-            axios.get('/api/userboards/' + me.props.location.query.id, {
-                headers: {
-                    "x-access-token": storageMgr.getToken()
-                }
-            }).then(function(res) {
-                me.props.showBoard(res.data);
-            });
-        }
-    }
-    componentDidUpdate() {
-        masonry.bind("pins", "pin");
-        masonry.reload("pins");
-    }
-    _renderPins() {
-        var me = this;
-        if (this.props.board.pins != undefined) {
-            return this.props.board.pins.map(function(item) {
-                return (
-                    <Pin key={Math.random()} pin={item}></Pin>
-                )
-            });
-        }
-        return "";
 
+    _renderPins(pins) {
+        var me = this;
+        return pins.map(function(item) {
+            return (
+                <Pin key={Math.random()} pin={item}></Pin>
+            )
+        });
     }
-    render() {
-        let image_url = "";
-        let title = "";
-        if (!_.isEmpty(this.props.board)) {
-            image_url = this.props.board.userboard.image_url;
-            title = this.props.board.userboard.title;
+
+    masonryOptions = {
+        transitionDuration: 0
+    }
+
+    styes = {
+        overlay: {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: '#f5f5f5',
+            zIndex: '1000'
+        },
+        content: {
+            position: 'absolute',
+            color: 'white',
+            top: '0px',
+            left: '0px',
+            right: '0px',
+            bottom: '0px',
+            border: '0px',
+            background: '',
+            overflow: 'auto',
+            WebkitOverflowScrolling: 'touch',
+            borderRadius: '0px',
+            outline: 'none',
+            padding: '20px'
+
         }
-        return (
-            <div>
-                <Menu className="pinview" fixed="top" borderless={true}>
-                    <Container>
-                        <Menu.Menu>
-                            <Menu.Item onClick={browserHistory.goBack}>
-                                <Icon name="left chevron" size={"big"}></Icon>
-                            </Menu.Item>
-                        </Menu.Menu>
-                        <Menu.Menu position={'right'}>
-                            <Menu.Item>
-                                <Button icon circular color="yellow">
-                                    <Icon name="plus" size={"large"}></Icon>
-                                </Button>
-                            </Menu.Item>
-                        </Menu.Menu>
-                    </Container>
-                </Menu>
-                <Container className="board_image">
-                    <div className="pinview-bg" style={{
-                        backgroundImage: "url(" + image_url + ")"
+    }
+
+    _renderContent() {
+        let userboard = this.props.board.userboard;
+        let pins = this.props.board.pins;
+        if (userboard) {
+            return (
+                <Container>
+                    <div onClick={this.props.closeModal} style={{
+                        position: 'fixed',
+                        right: '20px',
+                        top: '20px',
+                        fontSize: '3em',
+                        cursor: "pointer",
+                        fontWeight: 200,
+                        color: "black"
+                    }}>X</div>
+
+                    <div style={{
+                        paddingRight: '5px',
+                        paddingLeft: '5px',
+                        paddingBottom: "5px"
                     }}>
-                        <div className="bg-text">
-                            {title}
+                        <div style={{
+                            backgroundImage: "url(" + userboard.image_url + ")",
+                            height: '580px',
+                            width: '100%',
+                            backgroundPosition: '10% 30%',
+                            backgroundSize: 'cover',
+                            backgroundRepeat: 'no-repeat',
+                            backgroundAttachment: 'fixed'
+                        }}>
+                            <div className="image-bg">
+                                <div className="board-title" style={{
+                                    fontSize: '3em'
+                                }}>
+                                    {userboard.title}
+                                    <br></br>
+                                    <br></br>
+                                    <br></br>
+                                    <div>
+                                        <Button icon size="big" circular color="yellow">
+                                            <Icon name="plus"></Icon>
+                                        </Button>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
+                    <Masonry elementType={'div'} options={this.masonryOptions} disableImagesLoaded={false} updateOnEachImageLoad={false}>
+                        {this._renderPins(pins)}
+                    </Masonry>
                 </Container>
-                <div className="pins" style={{
-                    margin: "auto"
-                }}>
-                    {this._renderPins()}
-                </div>
+            )
+        }
+        return (
+            <Dimmer active inverted>
+                <div onClick={this.props.closeModal} style={{
+                    position: 'fixed',
+                    right: '20px',
+                    top: '20px',
+                    fontSize: '3em',
+                    cursor: "pointer",
+                    fontWeight: 200,
+                    color: "black"
+                }}>X</div>
+                <Loader>Awesome</Loader>
+            </Dimmer>
+        );
+
+    }
+
+    render() {
+        return (
+            <div>
+                {this._renderContent()}
             </div>
         )
     }
 }
 
-function mapStateToProps(state) {
-    return {board: state.board}
-}
-
-export default connect(mapStateToProps, actions)(BoardView);
+export default BoardView;

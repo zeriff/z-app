@@ -1,7 +1,7 @@
 var auth = require("../../middlewares/authorization");
 var UserboardController = require("../../controllers/Userboard")
 
-module.exports = function(router) {
+module.exports = function (router) {
 
     /**
 * @swagger
@@ -64,7 +64,10 @@ module.exports = function(router) {
 *                 $ref: "#/definitions/UserBoard"
 */
 
-    router.route("/userboards").get(auth.authorize_user, UserboardController.getAll).post(auth.authorize_user, UserboardController.create);
+    router
+        .route("/userboards")
+        .get(auth.authorize_user, UserboardController.getAll)
+        .post(auth.authorize_user, UserboardController.create);
 
     /**
 * @swagger
@@ -93,7 +96,9 @@ module.exports = function(router) {
 *             success:
 *               type: boolean
 */
-    router.route("/userboards/:title").delete(auth.authorize_user, UserboardController.delete);
+    router
+        .route("/userboards/:title")
+        .delete(auth.authorize_user, UserboardController.delete);
     /**
 * @swagger
 * /api/userboards/{id}:
@@ -122,7 +127,10 @@ module.exports = function(router) {
 *               type: boolean
 */
 
-    router.route("/userboards/:id").delete(auth.authorize_user, UserboardController.delete).get(auth.authorize_user, UserboardController.getUserBoard)
+    router
+        .route("/userboards/:id")
+        .delete(auth.authorize_user, UserboardController.delete)
+        .get(auth.authorize_user, UserboardController.getUserBoard)
 
     /**
 * @swagger
@@ -158,7 +166,9 @@ module.exports = function(router) {
 *         schema:
 *           $ref: "#/definitions/GenResponse"
 */
-    router.route("/userboards/:id/settings").post(auth.authorize_user, UserboardController.editSettings);
+    router
+        .route("/userboards/:id/settings/:v")
+        .post(auth.authorize_user, UserboardController.editSettings);
 
     /**
 * @swagger
@@ -225,5 +235,70 @@ module.exports = function(router) {
 *           $ref: "#/definitions/GenResponse"
 */
 
-    router.route("/userboards/:id/invite").post(auth.authorize_user, UserboardController.addInvites).delete(auth.authorize_user, UserboardController.removeInvites);
+    router
+        .route("/userboards/:id/invite")
+        .post(auth.authorize_user, UserboardController.addInvites)
+        .delete(auth.authorize_user, UserboardController.removeInvites);
+
+    /**
+* @swagger
+* /api/userboards/v/private:
+*   get:
+*     tags:
+*       - UserBoard
+*     description: Get all private User boards
+*     consumes:
+*       - application/x-www-form-urlencoded
+*     produces:
+*       - application/json
+*     parameters:
+*       - name: x-access-token
+*         description: Api access token
+*         required: true
+*         in: header
+*         type: string
+*     responses:
+*       200:
+*         description: Fetched all private boards
+*         schema:
+*           properties:
+*               boards:
+*                   type: array,
+*                   item:
+*                       $ref: "#/definitions/UserBoard"
+*/
+    router
+        .route("/userboards/v/private")
+        .get(auth.authorize_user, UserboardController.getAllPrivate);
+    /**
+* @swagger
+* /api/userboards/v/invites:
+*   get:
+*     tags:
+*       - UserBoard
+*     description: Get all Invited User boards
+*     consumes:
+*       - application/x-www-form-urlencoded
+*     produces:
+*       - application/json
+*     parameters:
+*       - name: x-access-token
+*         description: Api access token
+*         required: true
+*         in: header
+*         type: string
+*     responses:
+*       200:
+*         description: Fetched all invited boards
+*         schema:
+*           properties:
+*               boards:
+*                   type: array,
+*                   item:
+*                       $ref: "#/definitions/UserBoard"
+*/
+    router
+        .route("/userboards/v/invites")
+        .get(auth.authorize_user, UserboardController.getAllInvites);
+
 }

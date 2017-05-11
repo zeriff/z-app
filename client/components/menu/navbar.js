@@ -5,6 +5,7 @@ import {
     Menu,
     Segment,
     Container,
+    Image,
     Input
 } from 'semantic-ui-react'
 
@@ -13,21 +14,13 @@ import {browserHistory} from 'react-router';
 export default class NavBar extends React.Component {
 
     navigate(name) {
+
         switch (name) {
-            case "home":
-                browserHistory.push("/");
-                masonry.reload("pins");
-                break;
             case "discover":
                 browserHistory.push("/discover");
-                masonry.reload("boards");
                 break;
             case "profile":
                 browserHistory.push("/profile");
-                masonry.reload("boards");
-                break;
-            case "camera":
-                browserHistory.push("/camera");
                 break;
             case "notifications":
                 browserHistory.push("/notifications");
@@ -39,26 +32,26 @@ export default class NavBar extends React.Component {
         return (
             <Menu fixed="top" size="large" borderless={true} color={'black'} inverted>
                 <Container>
-                    <Menu.Item onClick={e => this.navigate("home")}>
+                    <Menu.Item>
                         <img className="ui mini circular image" src="/img/whitelogo.png"/>
                     </Menu.Item>
                     <Menu.Item style={{
                         width: '70%'
                     }}>
-                        <Input icon placeholder='Search...'>
+                        <Input className="ralewaytext" icon placeholder="Search What's Trending">
                             <input/>
-                            <Icon name='search'/>
+                            <Icon name="search"/>
                         </Input>
                     </Menu.Item>
                     <Menu.Menu position="right">
                         <Menu.Item icon onClick={e => this.navigate("discover")}>
-                            <Icon name="empty star" size={"big"}></Icon>
+                            <Image src="/img/favorite.png" size="mini"></Image>
                         </Menu.Item>
                         <Menu.Item icon onClick={e => this.navigate("notifications")}>
-                            <Icon name="lightning" size={"big"}></Icon>
+                            <Image src="/img/notification.png" size="mini"></Image>
                         </Menu.Item>
-                        <Menu.Item icon onClick={e => this.navigate("profile")}>
-                            <Icon name="smile" inverted size={"big"}></Icon>
+                        <Menu.Item onClick={e => this.navigate("profile")}>
+                            <Image src="/img/profile.png" size="mini"></Image>
                         </Menu.Item>
                     </Menu.Menu>
                 </Container>
